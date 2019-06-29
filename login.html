@@ -1,0 +1,79 @@
+﻿<meta name="viewport" charset=utf-8″ content="width=device-width, initial-scale=1, user-scalable=no" />
+<html>
+
+<head>
+	<title>测试</title>
+	<link rel="stylesheet" href="css/element.css">
+</head>
+<script type="text/javascript" src="js/vue.min.js"></script>
+<script type="text/javascript" src="js/element.js"></script>
+<script type="text/javascript" src="js/vue-clipboard.min.js"></script>
+<script type="text/javascript" src="js/vue-resource.min.js"></script>
+
+<body>
+	<div id="control">
+		<div class="loginform">
+			账号：<el-input v-model="loginform.username" placeholder="请输入用户名"></el-input>
+			密码：<el-input v-model="loginform.password" placeholder="请输入密码"></el-input>
+			<el-button type="primary" @click="login">登录</el-button>
+		</div>
+	</div>
+</body>
+
+<script>
+	var vm = new Vue({
+		el: '#control',
+		data: {
+			loginform: {
+				username: '',
+				password: '',
+			}
+		},
+		methods: {
+			success() {
+				this.$alert('在？你登录成功了！', '登录结果', {
+					confirmButtonText: '确定',
+					callback: action => {
+						this.$message({
+							type: 'info',
+							message: `action: ${action}`
+						})
+					}
+				});
+			},
+			failconnect() {
+				this.$alert('在？连不上后端哦', '登录结果', {
+					confirmButtonText: '确定',
+					callback: action => {
+						this.$message({
+							type: 'info',
+							message: `action: ${action}`
+						})
+					}
+				});
+			},
+			login() {
+				this.$http.post('http://localhost:8080/',
+					{
+						username: this.loginform.username,
+						password: this.loginform.password
+					},
+					{ emulateJSON: true }).then(function (res) {
+						document.write(res.body);
+						this.success();
+					}, function (res) {
+						console.log(res.status);
+						this.failconnect();
+					});
+			}
+		},
+	});
+</script>
+<style>
+	.loginform {
+		width: 50%;
+	}
+</style>
+
+
+</html>
