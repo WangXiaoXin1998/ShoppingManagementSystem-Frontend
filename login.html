@@ -73,11 +73,11 @@
 							return
 						}
 						else {
-							const token = res.data.token
-							windows.localStorage.setItem('username', this.username)
-							windows.localStorage.setItem('token', token)
-							//this.success();
 							console.log('登陆成功')
+							const token = res.data.token
+							//localStorage.setItem('username', username)
+							localStorage.setItem('token', token)
+							window.location.href = "purchase.html"
 						}
 					}, function (res) {
 						console.log(res.status);
