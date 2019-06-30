@@ -14,17 +14,17 @@ document.write('\
             </el-submenu>\
             <el-submenu index="2">\
                 <template slot="title"><i class="el-icon-menu"></i>账号管理</template>\
-                <el-link href="M_uAcount.html" target="_self">\
-                    <el-menu-item index="2-1">用户账号</el-menu-item>\
+                <el-link href="M_uAccount.html" target="_self">\
+                    <el-menu-item index="2-1">用户列表</el-menu-item>\
                 </el-link>\
                 <el-link href="M_mAccount.html" target="_self">\
-                    <el-menu-item index="2-2">管理账号</el-menu-item>\
+                    <el-menu-item index="2-2">管理员列表</el-menu-item>\
                 </el-link>\
             </el-submenu>\
             <el-submenu index="3">\
                 <template slot="title"><i class="el-icon-sell"></i>商品管理</template>\
                 <el-link href="M_mGoods.html" target="_self">\
-                    <el-menu-item index="3-1">管理商品</el-menu-item>\
+                    <el-menu-item index="3-1">商品列表</el-menu-item>\
                 </el-link>\
                 <el-link href="M_aGoods.html" target="_self">\
                     <el-menu-item index="3-2">添加商品</el-menu-item>\

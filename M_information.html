@@ -41,12 +41,10 @@
 			title: '个人信息',
 			timeduring: '',
 			User: {
-				U_id: JSON.parse(localStorage.User)['U_id'],
-				U_name: JSON.parse(localStorage.User)['U_name'],
-				U_phone: JSON.parse(localStorage.User)['U_phone']
+				U_id: '',
+				U_name: '',
+				U_phone: '',
 			},
-			activeIndex: '1',
-			activeIndex2: '1'
 		},
 		methods: {
 			handleSelect(key) {
@@ -54,23 +52,31 @@
 			},
 			goBack() {
 				window.history.go(-1);
-			}
+			},
+			getTime() {
+				hour = new Date().getHours()
+				if (hour < 6) {
+					this.timeduring = '凌晨好'
+				}
+				else if (hour < 12) {
+					this.timeduring = '上午好'
+				}
+				else if (hour < 17) {
+					this.timeduring = '下午好'
+				}
+				else {
+					this.timeduring = '晚上好'
+				}
+			},
 		},
 		mounted() {
-			hour = new Date().getHours()
-			console.log(hour)
-			if (hour < 6) {
-				this.timeduring = '凌晨好'
+			if (!localStorage['token']) {
+				window.location.href = 'login.html'
 			}
-			else if (hour < 12) {
-				this.timeduring = '上午好'
-			}
-			else if (hour < 17) {
-				this.timeduring = '下午好'
-			}
-			else {
-				this.timeduring = '晚上好'
-			}
+			this.User.U_id = JSON.parse(localStorage.User)['U_id']
+			this.User.U_name = JSON.parse(localStorage.User)['U_name']
+			this.User.U_phone = JSON.parse(localStorage.User)['U_phone']
+			this.getTime()
 		}
 	})
 </script>

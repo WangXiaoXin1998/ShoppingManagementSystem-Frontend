@@ -1,0 +1,128 @@
+﻿<meta name="viewport" charset=utf-8″ content="width=device-width, initial-scale=1, user-scalable=no" />
+<html>
+
+<head>
+	<title>用户管理</title>
+	<link rel="stylesheet" href="css/element.css">
+</head>
+<script type="text/javascript" src="js/vue.min.js"></script>
+<script type="text/javascript" src="js/element.js"></script>
+<script type="text/javascript" src="js/vue-clipboard.min.js"></script>
+<script type="text/javascript" src="js/vue-resource.min.js"></script>
+<script type="text/javascript" src="js/axios.min.js"></script>
+
+<body>
+	<div id="control">
+		<script type="text/javascript" src="js/M_frame_start.js"></script>
+		　　<el-table v-loading="loading"
+			:data="tableData.filter(data => !search || data.userid.toLowerCase().includes(search.toLowerCase())|| data.username.toLowerCase().includes(search.toLowerCase())|| data.userphone.toLowerCase().includes(search.toLowerCase()))"
+			style="width: 100%">
+			<el-table-column label="用户ID" prop="userid">
+			</el-table-column>
+			<el-table-column label="用户名" prop="username">
+			</el-table-column>
+			<el-table-column label="手机号" prop="userphone">
+			</el-table-column>
+			<el-table-column label="账户状态" prop="userstate">
+			</el-table-column>
+			<el-table-column align="right">
+				<template slot="header" slot-scope="scope">
+					<el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
+				</template>
+				<template slot-scope="scope">
+					<el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+					<el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+				</template>
+			</el-table-column>
+		</el-table>
+		<script type="text/javascript" src="js/M_frame_end.js"></script>
+	</div>
+</body>
+
+<script>
+	var vm = new Vue({
+		el: '#control',
+		data: {
+			title: '用户管理',
+			timeduring: '',
+			loading: true,
+			User: {
+				//U_id: JSON.parse(localStorage.User)['U_id'],
+				//U_name: JSON.parse(localStorage.User)['U_name'],
+				//U_phone: JSON.parse(localStorage.User)['U_phone']
+			},
+			tableData: [],
+			search: ''
+		},
+		methods: {
+			handleEdit(index, row) {
+				console.log(row);
+			},
+			handleDelete(index, row) {
+				console.log(row)
+				this.$http.post('http://localhost:9090/dddd/deleteuser',
+					{
+						username: row.userid,
+					},
+					{ emulateJSON: true }).then(function (res) {
+						document.write(res.body);
+						if (!res.ok) {
+							this.$message.error('删除失败：请求被拒绝');
+							return
+						}
+						else {
+							console.log('删除成功')
+							this.$message({
+								message: '删除成功：他号没了',
+								type: 'success'
+							});
+						}
+					}, function (res) {
+						this.$message.error('删除失败：服务器连接异常');
+					});
+			},
+			goBack() {
+				window.history.go(-1);
+			},
+			getData() {
+				console.log(localStorage['token'])
+				this.$http.post('http://localhost:9090/dddd/getData',
+					{
+						token: localStorage['token'],
+					},
+					{ emulateJSON: true }).then(function (res) {
+						if (!res.ok) {
+							this.$message.error('获取数据失败：请求被拒绝');
+							this.loading = false
+							return
+						}
+						else {
+							this.tableData = res.body
+							this.loading = false
+						}
+					}, function (res) {
+						this.$message.error('获取数据失败：服务器连接异常');
+						this.loading = false
+					});
+			}
+		},
+		mounted() {
+			// if (!localStorage['token']) {
+			// 	window.location.href = 'login.html'
+			// }
+			this.getData()
+			this.User.U_id = JSON.parse(localStorage.User)['U_id']
+			this.User.U_name = JSON.parse(localStorage.User)['U_name']
+			this.User.U_phone = JSON.parse(localStorage.User)['U_phone']
+		}
+	})
+</script>
+
+<style>
+	.bigtitle {
+		font-size: 25px;
+		font-weight: 500;
+	}
+</style>
+
+</html>
