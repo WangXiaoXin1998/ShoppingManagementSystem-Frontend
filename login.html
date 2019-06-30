@@ -75,7 +75,7 @@
 						else {
 							console.log('登陆成功')
 							const token = res.body.token
-							const User = res.body.User
+							const User = JSON.stringify(res.body.User)
 							console.log(token);
 							localStorage.setItem('User', User)
 							localStorage.setItem('token', token)

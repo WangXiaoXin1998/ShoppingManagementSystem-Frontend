@@ -41,9 +41,9 @@
 			title: '个人信息',
 			timeduring: '',
 			User: {
-				U_id: localStorage['User.U_id'],
-				U_name: localStorage['User.U_name'],
-				U_phone: localStorage['User.U_phone']
+				U_id: JSON.parse(localStorage.User)['U_id'],
+				U_name: JSON.parse(localStorage.User)['U_name'],
+				U_phone: JSON.parse(localStorage.User)['U_phone']
 			},
 			activeIndex: '1',
 			activeIndex2: '1'
