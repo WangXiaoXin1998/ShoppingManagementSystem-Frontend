@@ -61,7 +61,7 @@
 				});
 			},
 			login() {
-				this.$http.post('http://localhost:8080/',
+				this.$http.post('http://localhost:9090/dddd/login',
 					{
 						username: this.loginform.username,
 						password: this.loginform.password
@@ -74,7 +74,8 @@
 						}
 						else {
 							console.log('登陆成功')
-							const token = res.data.token
+							const token = res.body.token
+							console.log(token);
 							//localStorage.setItem('username', username)
 							localStorage.setItem('token', token)
 							window.location.href = "purchase.html"
