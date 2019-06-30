@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>测试</title>
+	<title>登录</title>
 	<link rel="stylesheet" href="css/element.css">
 </head>
 <script type="text/javascript" src="js/vue.min.js"></script>
@@ -13,9 +13,17 @@
 <body>
 	<div id="control">
 		<div class="loginform">
-			账号：<el-input v-model="loginform.username" placeholder="请输入用户名"></el-input>
-			密码：<el-input v-model="loginform.password" placeholder="请输入密码"></el-input>
-			<el-button type="primary" @click="login">登录</el-button>
+			<el-card class="box-card">
+				<div slot="header" class="clearfix">
+					<span>登录</span>
+					<el-button style="float: right; padding: 3px 0" @click="regist" type="text">没有账号？点我注册</el-button>
+				</div>
+				账号：<el-input v-model="loginform.username" placeholder="请输入用户名" class='input'></el-input><br>
+				密码：<el-input v-model="loginform.password" placeholder="请输入密码" class='input'></el-input><br>
+				<center>
+					<el-button type="primary" @click="login">登录</el-button>
+				</center>
+			</el-card>
 		</div>
 	</div>
 </body>
@@ -60,18 +68,37 @@
 					},
 					{ emulateJSON: true }).then(function (res) {
 						document.write(res.body);
-						this.success();
+						if (!res.ok) {
+							console.log('登录失败')
+							return
+						}
+						else {
+							const token = res.data.token
+							windows.localStorage.setItem('username', this.username)
+							windows.localStorage.setItem('token', token)
+							//this.success();
+							console.log('登陆成功')
+						}
 					}, function (res) {
 						console.log(res.status);
-						this.failconnect();
+						console.log('服务器连接异常')
 					});
+			},
+			regist() {
+				window.location.href = "regist.html"
 			}
 		},
 	});
 </script>
 <style>
 	.loginform {
-		width: 50%;
+		width: 400px;
+	}
+
+	.input {
+		width: 250px;
+		margin-bottom: 10px;
+		margin-top: 10px;
 	}
 </style>
 

@@ -14,8 +14,8 @@
 	<div id="control">
 		<el-card class="box-card">
 			<div slot="header" class="clearfix">
-				<span>注个册</span>
-				<el-button style="float: right; padding: 3px 0" type="text">点我登个录</el-button>
+				<span>注册</span>
+				<el-button style="float: right; padding: 3px 0" type="text" @click="login">已有账号？点我登录</el-button>
 			</div>
 			&emsp;用户名：<el-input v-model="registform.username" placeholder="请输入用户名" class='input'></el-input>
 			<br>
@@ -72,11 +72,14 @@
 						console.log(res.status);
 						console.log("fail");
 					});
+			},
+			login() {
+				window.location.href="login.html"
 			}
 		},
 		watch: {
 			'registform.username'(val) {
-				val.length < 6 ? this.tips[0] = '用户名必须大于6位' : this.tips[0] = '';
+				val.length < 6 || val.length > 20 ? this.tips[0] = '用户名必须为6-20位' : this.tips[0] = '';
 				this.checkform()
 			},
 			'registform.phone'(val) {
@@ -89,7 +92,7 @@
 				this.checkform()
 			},
 			'registform.password'(val) {
-				val.length < 6 ? this.tips[2] = '密码必须大于6位' : this.tips[2] = '';
+				val.length < 6 || val.length > 20 ? this.tips[2] = '密码必须为6-20位' : this.tips[2] = '';
 				val != this.registform.checkpwd ? this.tips[3] = '两次密码输入不一致' : this.tips[3] = ''
 				this.checkform()
 			},
