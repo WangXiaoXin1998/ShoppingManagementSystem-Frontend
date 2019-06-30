@@ -75,10 +75,11 @@
 						else {
 							console.log('登陆成功')
 							const token = res.body.token
+							const User = res.body.User
 							console.log(token);
-							//localStorage.setItem('username', username)
+							localStorage.setItem('User', User)
 							localStorage.setItem('token', token)
-							window.location.href = "purchase.html"
+							window.location.href = "M_information.html"
 						}
 					}, function (res) {
 						console.log(res.status);

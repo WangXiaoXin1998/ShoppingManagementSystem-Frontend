@@ -1,0 +1,85 @@
+﻿<meta name="viewport" charset=utf-8″ content="width=device-width, initial-scale=1, user-scalable=no" />
+<html>
+
+<head>
+	<title>个人信息</title>
+	<link rel="stylesheet" href="css/element.css">
+</head>
+<script type="text/javascript" src="js/vue.min.js"></script>
+<script type="text/javascript" src="js/element.js"></script>
+<script type="text/javascript" src="js/vue-clipboard.min.js"></script>
+<script type="text/javascript" src="js/vue-resource.min.js"></script>
+<script type="text/javascript" src="js/axios.min.js"></script>
+
+<body>
+	<div id="control">
+		<script type="text/javascript" src="js/M_frame_start.js"></script>
+		<br>
+		<el-row>
+			<el-col :span="2"><br></el-col>
+			<el-col :span="8">
+				<div class="block">
+					<div class="demo-basic--circle">
+						<el-avatar :size="250"></el-avatar>
+					</div>
+				</div>
+			</el-col>
+			<el-col :span="14">
+				<div class="bigtitle">{{timeduring}}，{{User.U_name}}！</div><br><br>
+				ＩＤ：{{User.U_id}}<br><br>
+				手机：{{User.U_phone}}
+			</el-col>
+		</el-row>
+		<script type="text/javascript" src="js/M_frame_end.js"></script>
+	</div>
+</body>
+
+<script>
+	var vm = new Vue({
+		el: '#control',
+		data: {
+			title: '个人信息',
+			timeduring: '',
+			User: {
+				U_id: localStorage['User.U_id'],
+				U_name: localStorage['User.U_name'],
+				U_phone: localStorage['User.U_phone']
+			},
+			activeIndex: '1',
+			activeIndex2: '1'
+		},
+		methods: {
+			handleSelect(key) {
+				console.log(key);
+			},
+			goBack() {
+				window.history.go(-1);
+			}
+		},
+		mounted() {
+			hour = new Date().getHours()
+			console.log(hour)
+			if (hour < 6) {
+				this.timeduring = '凌晨好'
+			}
+			else if (hour < 12) {
+				this.timeduring = '上午好'
+			}
+			else if (hour < 17) {
+				this.timeduring = '下午好'
+			}
+			else {
+				this.timeduring = '晚上好'
+			}
+		}
+	})
+</script>
+
+<style>
+	.bigtitle {
+		font-size: 25px;
+		font-weight: 500;
+	}
+</style>
+
+</html>
