@@ -56,20 +56,20 @@
 			search: ''
 		},
 		methods: {
-			changeState(index,row) {
+			changeState(index, row) {
 				if (row.userstate == '1') {
-					this.tableData[index].userstate = '0'
+					newstate = '0'
 					message = '该用户已被禁止登陆'
 				}
 				else {
-					this.tableData[index].userstate = '1'
+					newstate = '1'
 					message = '该用户已被允许登陆'
 				}
-				this.$http.post(baseurl + '/changeUser',
+				this.$http.post(baseurl + '/changeuserstate',
 					{
 						token: localStorage['token'],
 						userid: row.userid,
-						userstate: this.tableData[index].userstate
+						userstate: newstate
 					},
 					{ emulateJSON: true }).then(function (res) {
 						if (!res.ok) {
@@ -77,11 +77,12 @@
 							return
 						}
 						else {
+							this.tableData[index].userstate = newstate
 							this.$message({
-								message: '修改成功'+message,
+								message: '修改成功' + message,
 								type: 'success'
 							});
-							this.tableData.splice(index, 1);
+							this.tableData.splice(index, row);
 						}
 					}, function (res) {
 						this.$message.error('修改失败：服务器连接异常');
@@ -135,9 +136,9 @@
 			}
 		},
 		mounted() {
-			// if (!localStorage['token']) {
-			// 	window.location.href = 'login.html'
-			// }
+			if (!localStorage['token']) {
+				window.location.href = 'login.html'
+			}
 			this.getData()
 			this.User.U_id = JSON.parse(localStorage.User)['U_id']
 			this.User.U_name = JSON.parse(localStorage.User)['U_name']

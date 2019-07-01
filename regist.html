@@ -55,7 +55,7 @@
 				}
 			},
 			regist() {
-				this.$http.post(baseurl+'/register',
+				this.$http.post(baseurl + '/register',
 					{
 						username: this.registform.username,
 						password: this.registform.checkpwd,
@@ -64,13 +64,14 @@
 					{ emulateJSON: true }).then(function (res) {
 						document.write(res.body);
 						console.log("success");
+						window.location.href = 'login.html'
 					}, function (res) {
 						console.log(res.status);
 						console.log("fail");
 					});
 			},
 			login() {
-				window.location.href="login.html"
+				window.location.href = "login.html"
 			}
 		},
 		watch: {
