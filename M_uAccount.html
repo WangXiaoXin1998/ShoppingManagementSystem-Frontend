@@ -60,7 +60,7 @@
 			},
 			handleDelete(index, row) {
 				console.log(row)
-				this.$http.post('http://localhost:9090/dddd/deleteuser',
+				this.$http.post('http://192.168.43.249:9090/dddd/deleteuser',
 					{
 						token: localStorage['token'],
 						userid: row.userid,
@@ -81,13 +81,14 @@
 					}, function (res) {
 						this.$message.error('删除失败：服务器连接异常');
 					});
+				location.reload();
 			},
 			goBack() {
 				window.history.go(-1);
 			},
-			getData() {
+			async getData() {
 				console.log(localStorage['token'])
-				this.$http.post('http://localhost:9090/dddd/getData',
+				this.$http.post('http://192.168.43.249:9090/dddd/getalluser',
 					{
 						token: localStorage['token'],
 					},
@@ -98,8 +99,9 @@
 							return
 						}
 						else {
-							this.tableData = res.body
+							this.tableData = eval('(' + res.bodyText + ')')
 							this.loading = false
+							console.log(this.tableData)
 						}
 					}, function (res) {
 						this.$message.error('获取数据失败：服务器连接异常');
