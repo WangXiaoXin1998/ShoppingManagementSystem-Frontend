@@ -48,6 +48,8 @@
 		},
 		methods: {
 			async handleDelete(index, row) {
+				window.alert('该功能未做')
+				return
 				this.$http.post(baseurl + '/deleteuser',
 					{
 						token: localStorage['token'],
@@ -94,13 +96,12 @@
 			}
 		},
 		mounted() {
-			// if (!localStorage['token']) {
-			// 	window.location.href = 'login.html'
-			// }
+			if (!localStorage['token']) {
+				window.location.href = 'login.html'
+			}
 			this.getData()
-			// this.User.U_id = JSON.parse(localStorage.User)['U_id']
-			// this.User.U_name = JSON.parse(localStorage.User)['U_name']
-			// this.User.U_phone = JSON.parse(localStorage.User)['U_phone']
+			this.User.U_id = JSON.parse(localStorage.User)['U_id']
+			this.User.U_name = JSON.parse(localStorage.User)['U_name']
 		}
 	})
 </script>
