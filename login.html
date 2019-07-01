@@ -3,12 +3,8 @@
 
 <head>
 	<title>登录</title>
-	<link rel="stylesheet" href="css/element.css">
 </head>
-<script type="text/javascript" src="js/vue.min.js"></script>
-<script type="text/javascript" src="js/element.js"></script>
-<script type="text/javascript" src="js/vue-clipboard.min.js"></script>
-<script type="text/javascript" src="js/vue-resource.min.js"></script>
+<script type="text/javascript" src="js/js_lead-in.js"></script>
 
 <body>
 	<div id="control">
@@ -61,7 +57,7 @@
 				});
 			},
 			login() {
-				this.$http.post('http://192.168.43.249:9090/dddd/login',
+				this.$http.post(baseurl+'/login',
 					{
 						username: this.loginform.username,
 						password: this.loginform.password

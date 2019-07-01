@@ -3,12 +3,8 @@
 
 <head>
 	<title>注册</title>
-	<link rel="stylesheet" href="css/element.css">
 </head>
-<script type="text/javascript" src="js/vue.min.js"></script>
-<script type="text/javascript" src="js/element.js"></script>
-<script type="text/javascript" src="js/vue-clipboard.min.js"></script>
-<script type="text/javascript" src="js/vue-resource.min.js"></script>
+<script type="text/javascript" src="js/js_lead-in.js"></script>
 
 <body>
 	<div id="control">
@@ -59,7 +55,7 @@
 				}
 			},
 			regist() {
-				this.$http.post('http://192.168.43.249:9090/dddd/register',
+				this.$http.post(baseurl+'/register',
 					{
 						username: this.registform.username,
 						password: this.registform.checkpwd,

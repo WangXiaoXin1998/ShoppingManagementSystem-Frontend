@@ -3,13 +3,8 @@
 
 <head>
 	<title>用户管理</title>
-	<link rel="stylesheet" href="css/element.css">
 </head>
-<script type="text/javascript" src="js/vue.min.js"></script>
-<script type="text/javascript" src="js/element.js"></script>
-<script type="text/javascript" src="js/vue-clipboard.min.js"></script>
-<script type="text/javascript" src="js/vue-resource.min.js"></script>
-<script type="text/javascript" src="js/axios.min.js"></script>
+<script type="text/javascript" src="js/js_lead-in.js"></script>
 
 <body>
 	<div id="control">
@@ -59,7 +54,7 @@
 				console.log(row);
 			},
 			async handleDelete(index, row) {
-				this.$http.post('http://192.168.43.249:9090/dddd/deleteuser',
+				this.$http.post(baseurl+'/deleteuser',
 					{
 						token: localStorage['token'],
 						userid: row.userid,
@@ -85,7 +80,7 @@
 			},
 			async getData() {
 				console.log(localStorage['token'])
-				this.$http.post('http://192.168.43.249:9090/dddd/getalluser',
+				this.$http.post(baseurl+'/getalluser',
 					{
 						token: localStorage['token'],
 					},
