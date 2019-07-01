@@ -58,30 +58,27 @@
 			handleEdit(index, row) {
 				console.log(row);
 			},
-			handleDelete(index, row) {
-				console.log(row)
+			async handleDelete(index, row) {
 				this.$http.post('http://192.168.43.249:9090/dddd/deleteuser',
 					{
 						token: localStorage['token'],
 						userid: row.userid,
 					},
 					{ emulateJSON: true }).then(function (res) {
-						document.write(res.body);
 						if (!res.ok) {
 							this.$message.error('删除失败：请求被拒绝');
 							return
 						}
 						else {
-							console.log('删除成功')
 							this.$message({
 								message: '删除成功：他号没了',
 								type: 'success'
 							});
+							this.tableData.splice(index, 1);
 						}
 					}, function (res) {
 						this.$message.error('删除失败：服务器连接异常');
 					});
-				location.reload();
 			},
 			goBack() {
 				window.history.go(-1);
