@@ -59,9 +59,11 @@
 			changeState(index,row) {
 				if (row.userstate == '1') {
 					this.tableData[index].userstate = '0'
+					message = '该用户已被禁止登陆'
 				}
 				else {
 					this.tableData[index].userstate = '1'
+					message = '该用户已被允许登陆'
 				}
 				this.$http.post(baseurl + '/changeUser',
 					{
@@ -76,7 +78,7 @@
 						}
 						else {
 							this.$message({
-								message: '修改成功',
+								message: '修改成功'+message,
 								type: 'success'
 							});
 							this.tableData.splice(index, 1);
