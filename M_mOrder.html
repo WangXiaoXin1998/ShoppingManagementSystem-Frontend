@@ -31,7 +31,10 @@
 					{{orderStateTable[tableData[scope.$index].orderstate]}}
 				</template>
 			</el-table-column>
-			<el-table-column label="实付金额" prop="paymoney" width=100>
+			<el-table-column label="实付金额" width="100">
+				<template slot-scope="scope">
+					¥{{Number(tableData[scope.$index].paymoney).toFixed(2)}}
+				</template>
 			</el-table-column>
 			<el-table-column align="right" width=200>
 				<template slot="header" slot-scope="scope">
@@ -58,9 +61,9 @@
 				<b>用户名称：&emsp;</b>{{orderview.username}}<br>
 				<b>商品ＩＤ：&emsp;</b>{{orderview.goodsid}}<br>
 				<b>商品名称：&emsp;</b>{{orderview.goodsname}}<br>
-				<b>商品单价：&emsp;</b>{{orderview.paymoney/orderview.goodsnumber}}<br>
+				<b>商品单价：&emsp;</b>¥{{(orderview.paymoney/orderview.goodsnumber).toFixed(2)}}<br>
 				<b>购买数量：&emsp;</b>{{orderview.goodsnumber}}<br>
-				<b>实付金额：&emsp;</b>{{orderview.paymoney}}
+				<b>实付金额：&emsp;</b>¥{{Number(orderview.paymoney).toFixed(2)}}
 			</div>
 			<div slot="footer" class="dialog-footer">
 				<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
@@ -75,6 +78,11 @@
 		data: {
 			title: '查看订单',
 			loading: true,
+			Manage: {
+				M_id: '',
+				M_name: '',
+				M_grade: ''
+			},
 			orderStateTable: ["待支付", "待发货", "已完成"],
 			orderview: [],
 			dialogFormVisible: false,
@@ -84,7 +92,7 @@
 		methods: {
 			exit() {
 				localStorage.clear();
-				window.location.href='login.html'
+				window.location.href = 'login.html'
 			},
 			handleView(index, row) {
 				this.orderview = row

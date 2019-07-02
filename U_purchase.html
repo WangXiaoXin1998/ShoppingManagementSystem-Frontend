@@ -21,39 +21,62 @@
 			</el-table-column>
 			<el-table-column label="商品名称" prop="C_name">
 			</el-table-column>
-			<el-table-column label="商品单价" prop="C_price">
+			<el-table-column label="商品单价">
+				<template slot-scope="scope">
+					¥{{Number(tableData[scope.$index].C_price).toFixed(2)}}
+				</template>
 			</el-table-column>
 			<el-table-column label="商品库存" prop="C_stock">
 			</el-table-column>
-			<el-table-column align="center">
+			<el-table-column label="购买数量" align="center" width=100>
+				<template slot-scope="scope">
+					<div style="width:80px">
+						<el-input size="small" v-model="tableData[scope.$index].number"
+							@change="changeCart(scope.$index)">
+						</el-input>
+					</div>
+				</template>
+			</el-table-column>
+			<el-table-column label="金额小计">
+				<template slot-scope="scope">
+					<div
+						v-if="(Number(tableData[scope.$index].C_price)*(tableData[scope.$index].number)).toFixed(2)!='NaN'">
+						¥{{(Number(tableData[scope.$index].C_price)*(tableData[scope.$index].number)).toFixed(2)}}
+					</div>
+				</template>
+			</el-table-column>
+			<el-table-column align="center" width=150>
 				<template slot="header" slot-scope="scope">
 					<el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
 				</template>
 				<template slot-scope="scope">
-					<el-button size="mini" @click="handleView(scope.$index, scope.row)">详情</el-button>
-					<el-button size="mini" type="primary" @click="handlePurchase(scope.$index, scope.row)">购买
+					<el-button size="mini" @click="handleView(scope.$index, scope.row)">查看详情</el-button>
 					</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
+		<div class="moneyhead">
+			合计：
+			<nobr class="money">¥{{totalMoney.toFixed(2)}}</nobr>元&emsp;
+			<nobr>
+				<el-button type="primary" round @click="handlePurchase">立即购买</el-button>
+			</nobr>
+		</div>
 		<script type="text/javascript" src="js/U_frame_end.js"></script>
 
-		<el-dialog title="商品详情" :visible.sync="dialogFormVisible">
+		<el-dialog title="商品详情" :visible.sync="detailFormVisible">
 			<div style="line-height: 2">
-				{{tableData[index]}}
-				<!-- <b>商品ＩＤ：&emsp;</b>{{tableData[index].C_id}}<br>
-				<b>商品名称：&emsp;</b>{{tableData[index].C_name}}<br>
-				<b>商品类别：&emsp;</b>{{goodsType[tableData[index].T_id]-1}}<br>
-				<b>商品价格：&emsp;</b>{{tableData[index].C_price}}<br>
-				<b>商品描述：&emsp;</b>{{tableData[index].C_disc}}<br>
-				<b>商品库存：&emsp;</b>{{tableData[index].C_stock}}<br> -->
+				<b>商品ＩＤ：&emsp;</b>{{goods.C_id}}<br>
+				<b>商品名称：&emsp;</b>{{goods.C_name}}<br>
+				<b>商品类别：&emsp;</b>{{goodsType[goods.T_id-1]}}<br>
+				<b>商品价格：&emsp;</b>¥{{Number(goods.C_price).toFixed(2)}}<br>
+				<b>商品描述：&emsp;</b>{{goods.C_disc}}<br>
+				<b>商品库存：&emsp;</b>{{goods.C_stock}}<br>
 			</div>
 			<div slot="footer" class="dialog-footer">
-				<el-button @click="dialogFormVisible = false">取 消</el-button>
-				<el-button type="primary" @click="handlePurchase()">购 买</el-button>
+				<el-button type="primary" @click="detailFormVisible = false">确定</el-button>
 			</div>
 		</el-dialog>
-
 	</div>
 </body>
 
@@ -65,46 +88,70 @@
 			loading: true,
 			goodsType: ["家电", "手机", "电脑", "家居", "男装", "美妆", "鞋类", "母婴", "图书"],
 			tableData: [],
+			totalMoney: 0,
 			search: '',
-			index: '',
-			dialogFormVisible: false,
+			detailFormVisible: false,
+			purchaseFormVisible: false,
 			formLabelWidth: '120px',
 			User: {
 				U_id: '',
 				U_name: '',
 				U_phone: '',
-			}
+			},
+			goods: { C_id: "", C_name: "", T_id: "", C_price: 0, C_disc: "", C_stock: 0, number: 0, money: 0 },
 		},
 		methods: {
 			exit() {
 				localStorage.clear();
 				window.location.href = 'login.html'
 			},
-			async handleDelete(index, row) {
-				this.$http.post(baseurl + '/deletegoods',
+			changeCart(index) {
+				if (typeof (this.tableData[index].number) == "number")
+					this.tableData[index].number = 0
+				this.tableData[index].number = parseInt(this.tableData[index].number)
+				if (this.tableData[index].number < 0)
+					this.tableData[index].number = 0
+				else if (this.tableData[index].number > this.tableData[index].C_stock)
+					this.tableData[index].number = this.tableData[index].C_stock
+				this.totalMoney = 0
+				for (i of this.tableData) {
+					if (i.number)
+						number = i.number
+					else
+						number = 0
+					this.totalMoney = this.totalMoney + i.C_price * number
+				}
+			},
+			handleView(index, row) {
+				this.goods = row
+				this.detailFormVisible = true
+			},
+			handlePurchase(index, row) {
+				cart = []
+				for (i of this.tableData) {
+					if (i.number) {
+						cart.push({ C_id: i.C_id, C_number: i.number })
+					}
+				}
+				this.$http.post(baseurl + '/purchase',
 					{
 						token: localStorage['token'],
-						goodsid: row.C_id,
+						goods: cart,
 					},
 					{ emulateJSON: true }).then(function (res) {
 						if (!res.ok) {
-							this.$message.error('删除失败：请求被拒绝');
+							this.$message.error('下单失败：请求被拒绝');
 							return
 						}
 						else {
 							this.$message({
-								message: '删除成功：该商品已被删除',
+								message: '下单成功',
 								type: 'success'
 							});
-							this.tableData.splice(index, 1);
 						}
 					}, function (res) {
-						this.$message.error('删除失败：服务器连接异常');
+						this.$message.error('下单失败：服务器连接异常');
 					});
-			},
-			async handleView(index) {
-				this.index = index
-				this.dialogFormVisible = true
 			},
 			getData() {
 				this.$http.post(baseurl + '/getallgoods',
@@ -143,6 +190,19 @@
 	.bigtitle {
 		font-size: 25px;
 		font-weight: 500;
+	}
+
+	.moneyhead {
+		margin-top: 10px;
+		line-height: 30px;
+		font-size: 18px;
+		float: right;
+	}
+
+	.money {
+		font-size: 18px;
+		color: red;
+		margin-right: 2px
 	}
 </style>
 
