@@ -18,6 +18,7 @@
 				密码：<el-input v-model="loginform.password" placeholder="请输入密码" class='input'></el-input><br>
 				<center>
 					<el-button type="primary" @click="login">登录</el-button>
+					<el-button type="primary" @click="login_admin">管理员登录</el-button>
 				</center>
 			</el-card>
 		</div>
@@ -63,7 +64,6 @@
 						password: this.loginform.password
 					},
 					{ emulateJSON: true }).then(function (res) {
-						document.write(res.body);
 						if (!res.ok) {
 							console.log('登录失败')
 							return
@@ -74,6 +74,31 @@
 							const User = JSON.stringify(res.body.User)
 							console.log(token);
 							localStorage.setItem('User', User)
+							localStorage.setItem('token', token)
+							window.location.href = "M_information.html"
+						}
+					}, function (res) {
+						console.log(res.status);
+						console.log('服务器连接异常')
+					});
+			},
+			login_admin() {
+				this.$http.post(baseurl+'/login_admin',
+					{
+						username: this.loginform.username,
+						password: this.loginform.password
+					},
+					{ emulateJSON: true }).then(function (res) {
+						if (!res.ok) {
+							console.log('登录失败')
+							return
+						}
+						else {
+							console.log('登陆成功')
+							const token = res.bodyText.token
+							const Manage = JSON.stringify(res.bodyText.Manage)
+							console.log(Manage)
+							localStorage.setItem('Manage', Manage)
 							localStorage.setItem('token', token)
 							window.location.href = "M_information.html"
 						}

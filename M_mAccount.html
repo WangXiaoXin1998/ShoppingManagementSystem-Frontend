@@ -39,10 +39,6 @@
 		data: {
 			title: '管理员列表',
 			loading: true,
-			User: {
-				U_id: JSON.parse(localStorage.User)['U_id'],
-				U_name: JSON.parse(localStorage.User)['U_name'],
-			},
 			tableData: [],
 			search: ''
 		},
@@ -100,8 +96,9 @@
 				window.location.href = 'login.html'
 			}
 			this.getData()
-			this.User.U_id = JSON.parse(localStorage.User)['U_id']
-			this.User.U_name = JSON.parse(localStorage.User)['U_name']
+			this.Manage.M_id = JSON.parse(localStorage.Manage)['M_id']
+			this.Manage.M_name = JSON.parse(localStorage.Manage)['M_name']
+			this.Manage.M_grade = JSON.parse(localStorage.Manage)['M_grade']
 		}
 	})
 </script>

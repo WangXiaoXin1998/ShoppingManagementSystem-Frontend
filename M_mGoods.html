@@ -87,10 +87,6 @@
 		data: {
 			title: '商品列表',
 			loading: true,
-			User: {
-				U_id: JSON.parse(localStorage.User)['U_id'],
-				U_name: JSON.parse(localStorage.User)['U_name'],
-			},
 			goodsType: ["家电", "手机", "电脑", "家居", "男装", "美妆", "鞋类", "母婴", "图书"],
 			tableData: [],
 			search: '',
@@ -218,8 +214,9 @@
 				window.location.href = 'login.html'
 			}
 			this.getData()
-			this.User.U_id = JSON.parse(localStorage.User)['U_id']
-			this.User.U_name = JSON.parse(localStorage.User)['U_name']
+			this.Manage.M_id = JSON.parse(localStorage.Manage)['M_id']
+			this.Manage.M_name = JSON.parse(localStorage.Manage)['M_name']
+			this.Manage.M_state = JSON.parse(localStorage.Manage)['M_state']
 		}
 	})
 </script>

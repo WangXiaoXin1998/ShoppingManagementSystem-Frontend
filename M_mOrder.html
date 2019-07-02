@@ -1,0 +1,178 @@
+﻿<meta name="viewport" charset=utf-8″ content="width=device-width, initial-scale=1, user-scalable=no" />
+<html>
+
+<head>
+	<title>查看订单</title>
+</head>
+<script type="text/javascript" src="js/js_lead-in.js"></script>
+
+<body>
+	<div id="control">
+		<script type="text/javascript" src="js/M_frame_start.js"></script>
+		　　<el-table v-loading="loading"
+			:data="tableData.filter(data => !search || data.time.toLowerCase().includes(search.toLowerCase())|| data.orderid.toLowerCase().includes(search.toLowerCase())|| data.orderstate.toLowerCase().includes(search.toLowerCase())|| data.userid.toLowerCase().includes(search.toLowerCase())|| data.username.toLowerCase().includes(search.toLowerCase())|| data.goodsid.toLowerCase().includes(search.toLowerCase())|| data.goodsname.toLowerCase().includes(search.toLowerCase())|| data.paymoney.toLowerCase().includes(search.toLowerCase()))"
+			style="width: 100%" stripe>
+			<el-table-column label="生成时间" prop="time" width="180">
+			</el-table-column>
+			<el-table-column label="订单ID" prop="orderid" width=100>
+			</el-table-column>
+			<el-table-column label="购买用户" width=160>
+				<template slot-scope="scope">
+					{{tableData[scope.$index].username}}（ID:{{tableData[scope.$index].userid}}）
+				</template>
+			</el-table-column>
+			<el-table-column label="购买商品">
+				<template slot-scope="scope">
+					{{tableData[scope.$index].goodsname}}（ID:{{tableData[scope.$index].goodsid}}）
+				</template>
+			</el-table-column>
+			<el-table-column label="订单状态" width="90">
+				<template slot-scope="scope">
+					{{orderStateTable[tableData[scope.$index].orderstate]}}
+				</template>
+			</el-table-column>
+			<el-table-column label="实付金额" prop="paymoney" width=100>
+			</el-table-column>
+			<el-table-column align="right" width=200>
+				<template slot="header" slot-scope="scope">
+					<el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
+				</template>
+				<template slot-scope="scope">
+					<nobr v-if="tableData[scope.$index].orderstate=='1'">
+						<el-button size="mini" type="primary" @click="handleChange(scope.$index, scope.row)">发货
+						</el-button>
+					</nobr>
+					<el-button size="mini" @click="handleView(scope.$index, scope.row)" style="margin-right:-10px">查看
+					</el-button>
+					<el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除
+					</el-button>
+				</template>
+			</el-table-column>
+		</el-table>
+		<script type="text/javascript" src="js/M_frame_end.js"></script>
+		<el-dialog title="订单详情" :visible.sync="dialogFormVisible">
+			<div style="line-height: 2">
+				<b>订单ＩＤ：&emsp;</b>{{orderview.orderid}}<br>
+				<b>生成时间：&emsp;</b>{{orderview.time}}<br>
+				<b>用户ＩＤ：&emsp;</b>{{orderview.userid}}<br>
+				<b>用户名称：&emsp;</b>{{orderview.username}}<br>
+				<b>商品ＩＤ：&emsp;</b>{{orderview.goodsid}}<br>
+				<b>商品名称：&emsp;</b>{{orderview.goodsname}}<br>
+				<b>商品单价：&emsp;</b>{{orderview.paymoney/orderview.goodsnumber}}<br>
+				<b>购买数量：&emsp;</b>{{orderview.goodsnumber}}<br>
+				<b>实付金额：&emsp;</b>{{orderview.paymoney}}
+			</div>
+			<div slot="footer" class="dialog-footer">
+				<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+			</div>
+		</el-dialog>
+	</div>
+</body>
+
+<script>
+	var vm = new Vue({
+		el: '#control',
+		data: {
+			title: '查看订单',
+			loading: true,
+			orderStateTable: ["待支付", "待发货", "已完成"],
+			orderview: [],
+			dialogFormVisible: false,
+			tableData: [],
+			search: ''
+		},
+		methods: {
+			handleView(index, row) {
+				this.orderview = row
+				this.dialogFormVisible = true
+			},
+			handleChange(index, row) {
+				this.$http.post(baseurl + '/changeorderstate',
+					{
+						token: localStorage['token'],
+						orderid: row.orderid,
+						orderstate: 2,
+					},
+					{ emulateJSON: true }).then(function (res) {
+						if (!res.ok) {
+							this.$message.error('发货失败：请求被拒绝');
+							return
+						}
+						else {
+							this.$message({
+								message: '发货成功',
+								type: 'success'
+							});
+							this.tableData[index].orderstate = 2
+						}
+					}, function (res) {
+						this.$message.error('发货失败：服务器连接异常');
+					});
+			},
+			handleDelete(index, row) {
+				this.$http.post(baseurl + '/deleteorder',
+					{
+						token: localStorage['token'],
+						orderid: row.orderid,
+					},
+					{ emulateJSON: true }).then(function (res) {
+						if (!res.ok) {
+							this.$message.error('删除失败：请求被拒绝');
+							return
+						}
+						else {
+							this.$message({
+								message: '删除成功',
+								type: 'success'
+							});
+							this.tableData.splice(index, 1);
+						}
+					}, function (res) {
+						this.$message.error('删除失败：服务器连接异常');
+					});
+			},
+			goBack() {
+				window.history.go(-1);
+			},
+			getData() {
+				this.$http.post(baseurl + '/getallorder',
+					{
+						token: localStorage['token'],
+					},
+					{ emulateJSON: true }).then(function (res) {
+						if (!res.ok) {
+							this.$message.error('获取数据失败：请求被拒绝');
+							this.loading = false
+							return
+						}
+						else {
+							this.tableData = eval('(' + res.bodyText + ')')
+							console.log(this.tableData)
+							this.loading = false
+						}
+					}, function (res) {
+						this.$message.error('获取数据失败：服务器连接异常');
+						this.loading = false
+					});
+			}
+		},
+		mounted() {
+			if (!localStorage['token']) {
+				window.location.href = 'login.html'
+			}
+			this.getData()
+			this.Manage.M_id = JSON.parse(localStorage.Manage)['M_id']
+			this.Manage.M_name = JSON.parse(localStorage.Manage)['M_name']
+			this.Manage.M_grade = JSON.parse(localStorage.Manage)['M_grade']
+		}
+	})
+</script>
+
+<style>
+	.bigtitle {
+		font-size: 25px;
+		font-weight: 500;
+	}
+</style>
+
+</html>
