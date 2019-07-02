@@ -43,6 +43,10 @@
 			search: ''
 		},
 		methods: {
+			exit() {
+				localStorage.clear();
+				window.location.href='login.html'
+			},
 			async handleDelete(index, row) {
 				window.alert('该功能未做')
 				return
@@ -66,9 +70,6 @@
 					}, function (res) {
 						this.$message.error('删除失败：服务器连接异常');
 					});
-			},
-			goBack() {
-				window.history.go(-1);
 			},
 			getData() {
 				this.$http.post(baseurl + '/getallmanager',

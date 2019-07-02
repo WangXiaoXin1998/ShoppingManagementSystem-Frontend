@@ -82,6 +82,10 @@
 			search: ''
 		},
 		methods: {
+			exit() {
+				localStorage.clear();
+				window.location.href='login.html'
+			},
 			handleView(index, row) {
 				this.orderview = row
 				this.dialogFormVisible = true
@@ -130,9 +134,6 @@
 					}, function (res) {
 						this.$message.error('删除失败：服务器连接异常');
 					});
-			},
-			goBack() {
-				window.history.go(-1);
 			},
 			getData() {
 				this.$http.post(baseurl + '/getallorder',

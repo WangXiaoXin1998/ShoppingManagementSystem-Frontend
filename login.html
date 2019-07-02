@@ -75,7 +75,7 @@
 							console.log(token);
 							localStorage.setItem('User', User)
 							localStorage.setItem('token', token)
-							window.location.href = "M_information.html"
+							window.location.href = "U_information.html"
 						}
 					}, function (res) {
 						console.log(res.status);
@@ -95,8 +95,8 @@
 						}
 						else {
 							console.log('登陆成功')
-							const token = res.bodyText.token
-							const Manage = JSON.stringify(res.bodyText.Manage)
+							const token = res.body.token
+							const Manage = JSON.stringify(res.body.Manage)
 							console.log(Manage)
 							localStorage.setItem('Manage', Manage)
 							localStorage.setItem('token', token)

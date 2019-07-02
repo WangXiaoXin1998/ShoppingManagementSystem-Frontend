@@ -80,6 +80,10 @@
 
 		},
 		methods: {
+			exit() {
+				localStorage.clear();
+				window.location.href='login.html'
+			},
 			submitAdd(formName) {
 				console.log(this.goodsForm)
 				this.$refs[formName].validate((valid) => {
@@ -114,9 +118,6 @@
 			},
 			resetForm(formName) {
 				this.$refs[formName].resetFields();
-			},
-			goBack() {
-				window.history.go(-1);
 			},
 		},
 		mounted() {

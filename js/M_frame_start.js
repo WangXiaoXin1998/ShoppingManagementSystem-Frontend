@@ -1,7 +1,10 @@
 document.write('\
 <el-container>\
 <el-header style="background:white;border-bottom-style:groove;border-bottom-width: 0.8px;height:38px">\
-    <a href=”#” onClick="javascript:history.go(-1);" target="_self" style="text-decoration:none;color:black"><i class="el-icon-arrow-left"></i> 返回</a>　|　<b>{{title}}</b>\
+    <div style="margin-top:3px">\
+        <a href="" onClick="javascript:history.go(-1);" target="_self" style="text-decoration:none;color:black"><i class="el-icon-arrow-left"></i> 返回</a>　|　<b>{{title}}</b>\
+    </div>\
+    <nobr style="float:right;margin-top:-24px"><el-button plain @click="exit" size="small">退出登陆</el-button></nobr>\
 </el-header>\
 <el-container>\
     <el-aside width="200px">\

@@ -119,6 +119,10 @@
 			}
 		},
 		methods: {
+			exit() {
+				localStorage.clear();
+				window.location.href='login.html'
+			},
 			async handleDelete(index, row) {
 				this.$http.post(baseurl + '/deletegoods',
 					{
@@ -184,9 +188,6 @@
 						this.$message.error('修改失败：服务器连接异常');
 					});
 				this.dialogFormVisible = false
-			},
-			goBack() {
-				window.history.go(-1);
 			},
 			getData() {
 				this.$http.post(baseurl + '/getallgoods',

@@ -2,54 +2,58 @@
 <html>
 
 <head>
-	<title>查看订单</title>
+	<title>购买商品</title>
 </head>
 <script type="text/javascript" src="js/js_lead-in.js"></script>
 
 <body>
 	<div id="control">
-		<script type="text/javascript" src="js/M_frame_start.js"></script>
+		<script type="text/javascript" src="js/U_frame_start.js"></script>
 		　　<el-table v-loading="loading"
-			:data="tableData.filter(data => !search || data.time.toLowerCase().includes(search.toLowerCase())|| data.orderid.toLowerCase().includes(search.toLowerCase())|| data.orderstate.toLowerCase().includes(search.toLowerCase())|| data.userid.toLowerCase().includes(search.toLowerCase())|| data.username.toLowerCase().includes(search.toLowerCase())|| data.goodsid.toLowerCase().includes(search.toLowerCase())|| data.goodsname.toLowerCase().includes(search.toLowerCase())|| data.paymoney.toLowerCase().includes(search.toLowerCase()))"
+			:data="tableData.filter(data => !search || data.manageid.toLowerCase().includes(search.toLowerCase())|| data.managename.toLowerCase().includes(search.toLowerCase())|| data.managephone.toLowerCase().includes(search.toLowerCase()))"
 			style="width: 100%" stripe>
-			<el-table-column label="生成时间" prop="time" width="180">
+			<el-table-column label="商品ID" prop="C_id">
 			</el-table-column>
-			<el-table-column label="订单ID" prop="orderid" width=100>
-			</el-table-column>
-			<el-table-column label="购买用户" width=160>
+			<el-table-column label="商品类别">
 				<template slot-scope="scope">
-					{{tableData[scope.$index].username}}（ID:{{tableData[scope.$index].userid}}）
+					{{goodsType[tableData[scope.$index].T_id-1]}}
 				</template>
 			</el-table-column>
-			<el-table-column label="购买商品">
-				<template slot-scope="scope">
-					{{tableData[scope.$index].goodsname}}（ID:{{tableData[scope.$index].goodsid}}）
-				</template>
+			<el-table-column label="商品名称" prop="C_name">
 			</el-table-column>
-			<el-table-column label="订单状态" width="90">
-				<template slot-scope="scope">
-					{{orderStateTable[tableData[scope.$index].orderstate]}}
-				</template>
+			<el-table-column label="商品单价" prop="C_price">
 			</el-table-column>
-			<el-table-column label="实付金额" prop="paymoney" width=100>
+			<el-table-column label="商品库存" prop="C_stock">
 			</el-table-column>
-			<el-table-column align="right" width=200>
+			<el-table-column align="center">
 				<template slot="header" slot-scope="scope">
 					<el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
 				</template>
 				<template slot-scope="scope">
-					<nobr v-if="tableData[scope.$index].orderstate=='1'">
-						<el-button size="mini" type="primary" @click="handleChange(scope.$index, scope.row)">发货
-						</el-button>
-					</nobr>
-					<el-button size="mini" @click="handleView(scope.$index, scope.row)" style="margin-right:-10px">查看
-					</el-button>
-					<el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除
+					<el-button size="mini" @click="handleView(scope.$index, scope.row)">详情</el-button>
+					<el-button size="mini" type="primary" @click="handlePurchase(scope.$index, scope.row)">购买
 					</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
-		<script type="text/javascript" src="js/M_frame_end.js"></script>
+		<script type="text/javascript" src="js/U_frame_end.js"></script>
+
+		<el-dialog title="商品详情" :visible.sync="dialogFormVisible">
+			<div style="line-height: 2">
+				{{tableData[index]}}
+				<!-- <b>商品ＩＤ：&emsp;</b>{{tableData[index].C_id}}<br>
+				<b>商品名称：&emsp;</b>{{tableData[index].C_name}}<br>
+				<b>商品类别：&emsp;</b>{{goodsType[tableData[index].T_id]-1}}<br>
+				<b>商品价格：&emsp;</b>{{tableData[index].C_price}}<br>
+				<b>商品描述：&emsp;</b>{{tableData[index].C_disc}}<br>
+				<b>商品库存：&emsp;</b>{{tableData[index].C_stock}}<br> -->
+			</div>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="dialogFormVisible = false">取 消</el-button>
+				<el-button type="primary" @click="handlePurchase()">购 买</el-button>
+			</div>
+		</el-dialog>
+
 	</div>
 </body>
 
@@ -57,47 +61,30 @@
 	var vm = new Vue({
 		el: '#control',
 		data: {
-			title: '查看订单',
+			title: '商品列表',
 			loading: true,
-			User: {
-				U_id: JSON.parse(localStorage.User)['U_id'],
-				U_name: JSON.parse(localStorage.User)['U_name'],
-			},
-			orderStateTable: ["待支付", "待发货", "已完成"],
+			goodsType: ["家电", "手机", "电脑", "家居", "男装", "美妆", "鞋类", "母婴", "图书"],
 			tableData: [],
-			search: ''
+			search: '',
+			index: '',
+			dialogFormVisible: false,
+			formLabelWidth: '120px',
+			User: {
+				U_id: '',
+				U_name: '',
+				U_phone: '',
+			}
 		},
 		methods: {
-			handleChange(index, row) {
-				this.$http.post(baseurl + '/changeorderstate',
-					{
-						token: localStorage['token'],
-						orderid: row.orderid,
-						orderstate: 2, 
-					},
-					{ emulateJSON: true }).then(function (res) {
-						if (!res.ok) {
-							this.$message.error('发货失败：请求被拒绝');
-							return
-						}
-						else {
-							this.$message({
-								message: '发货成功',
-								type: 'success'
-							});
-							this.tableData[index].orderstate='已发货'
-							this.tableData.splice(index, 1);
-						}
-					}, function (res) {
-						this.$message.error('发货失败：服务器连接异常');
-					});
-					console.log(res)
+			exit() {
+				localStorage.clear();
+				window.location.href = 'login.html'
 			},
-			handleDelete(index, row) {
-				this.$http.post(baseurl + '/deleteorder',
+			async handleDelete(index, row) {
+				this.$http.post(baseurl + '/deletegoods',
 					{
 						token: localStorage['token'],
-						orderid: row.orderid,
+						goodsid: row.C_id,
 					},
 					{ emulateJSON: true }).then(function (res) {
 						if (!res.ok) {
@@ -106,7 +93,7 @@
 						}
 						else {
 							this.$message({
-								message: '删除成功',
+								message: '删除成功：该商品已被删除',
 								type: 'success'
 							});
 							this.tableData.splice(index, 1);
@@ -115,11 +102,12 @@
 						this.$message.error('删除失败：服务器连接异常');
 					});
 			},
-			goBack() {
-				window.history.go(-1);
+			async handleView(index) {
+				this.index = index
+				this.dialogFormVisible = true
 			},
 			getData() {
-				this.$http.post(baseurl + '/getallorder',
+				this.$http.post(baseurl + '/getallgoods',
 					{
 						token: localStorage['token'],
 					},
@@ -131,7 +119,6 @@
 						}
 						else {
 							this.tableData = eval('(' + res.bodyText + ')')
-							console.log(this.tableData)
 							this.loading = false
 						}
 					}, function (res) {
@@ -147,6 +134,7 @@
 			this.getData()
 			this.User.U_id = JSON.parse(localStorage.User)['U_id']
 			this.User.U_name = JSON.parse(localStorage.User)['U_name']
+			this.User.U_phone = JSON.parse(localStorage.User)['U_phone']
 		}
 	})
 </script>

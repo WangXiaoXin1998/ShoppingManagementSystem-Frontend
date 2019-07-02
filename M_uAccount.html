@@ -49,6 +49,10 @@
 			search: ''
 		},
 		methods: {
+			exit() {
+				localStorage.clear();
+				window.location.href='login.html'
+			},
 			changeState(index, row) {
 				if (row.userstate == '1') {
 					newstate = '0'
@@ -102,9 +106,6 @@
 					}, function (res) {
 						this.$message.error('删除失败：服务器连接异常');
 					});
-			},
-			goBack() {
-				window.history.go(-1);
 			},
 			getData() {
 				this.$http.post(baseurl + '/getalluser',
