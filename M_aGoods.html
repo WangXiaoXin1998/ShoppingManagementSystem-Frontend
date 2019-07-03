@@ -74,8 +74,8 @@
 				],
 				price: [
 					{ required: true, message: '请输入商品价格', trigger: 'blur' },
-					{ min: 0.01, message: '商品价格不得少于0.01元', trigger: 'blur' },
-					{ pattern: /^\d+(\.\d+)?$/, message: '商品价格必须为数字', trigger: 'blur' },
+					{ min: 0, message: '商品价格必须为非负数', trigger: 'blur' },
+					{ pattern: /^\d+(\.\d+)?$/, message: '商品价格必须为非负数', trigger: 'blur' },
 				],
 				description: [
 					{ required: true, message: '请填写商品描述', trigger: 'blur' },
