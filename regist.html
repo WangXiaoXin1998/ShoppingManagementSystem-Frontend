@@ -25,11 +25,11 @@
 						<el-input v-model="registform.phone" placeholder="请输入手机号" class="input"></el-input>
 					</el-form-item>
 					<el-form-item label="密码" size="medium" prop="password" autocomplete="off">
-						<el-input type="password" v-model="registform.password" placeholder="请输入密码" class="input">
+						<el-input type="password" v-model="registform.password" placeholder="请输入密码" class="input" show-password>
 						</el-input>
 					</el-form-item>
 					<el-form-item label="确认密码" size="medium" prop="checkpwd" autocomplete="off">
-						<el-input type="password" v-model="registform.checkpwd" placeholder="请再输一次密码" class="input">
+						<el-input type="password" v-model="registform.checkpwd" placeholder="请再输一次密码" class="input" show-password>
 						</el-input>
 					</el-form-item>
 				</el-form>
@@ -133,12 +133,6 @@
 									duration: 3000,
 								});
 								setTimeout(() => { this.login() }, 3000);
-								// this.$alert('请使用用户名【' + this.registform.username + '】进行登录！', '注册成功', {
-								// 	confirmButtonText: '去登录',
-								// 	callback: action => {
-								// 		window.location.href = 'login.html'
-								// 	}
-								// });
 							}, function (res) {
 								if (res.status == 418) {
 									this.$message.error('注册失败：用户名已存在');

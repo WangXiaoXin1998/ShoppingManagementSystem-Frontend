@@ -23,7 +23,7 @@
 						<el-input v-model="loginform.username" placeholder="请输入用户名" class="input"></el-input>
 					</el-form-item>
 					<el-form-item label="密码" size="medium" prop="password" autocomplete="off">
-						<el-input type="password" v-model="loginform.password" placeholder="请输入密码" class="input"></el-input>
+						<el-input type="password" v-model="loginform.password" placeholder="请输入密码" class="input" show-password></el-input>
 					</el-form-item>
 					<el-form-item label="角色" prop="character">
 						<el-radio-group v-model="loginform.character" class="chooseType">

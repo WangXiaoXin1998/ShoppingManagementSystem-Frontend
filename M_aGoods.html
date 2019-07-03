@@ -74,8 +74,7 @@
 				],
 				price: [
 					{ required: true, message: '请输入商品价格', trigger: 'blur' },
-					{ min: 0, message: '商品价格必须为非负数', trigger: 'blur' },
-					{ pattern: /^\d+(\.\d+)?$/, message: '商品价格必须为非负数', trigger: 'blur' },
+					{ pattern: /^(?=.*[1-9])\d+(\.\d{1,2})?$/, message: '请输入大于0元的的有效价格', trigger: 'blur' },
 				],
 				description: [
 					{ required: true, message: '请填写商品描述', trigger: 'blur' },
@@ -87,7 +86,7 @@
 		methods: {
 			exit() {
 				localStorage.clear();
-				window.location.href='login.html'
+				window.location.href = 'login.html'
 			},
 			submitAdd(formName) {
 				console.log(this.goodsForm)
