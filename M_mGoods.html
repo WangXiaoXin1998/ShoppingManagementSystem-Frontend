@@ -149,7 +149,7 @@
 						}
 					}, function (res) {
 						if (res.status) {
-							this.$message.error('修改失败：请先删除包含该商品的所有订单');
+							this.$message.error('删除失败：请先删除包含该商品的所有订单');
 						} else {
 							this.$message.error('删除失败：服务器连接异常');
 						}
