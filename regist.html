@@ -14,7 +14,7 @@
 			<el-card class="box-card">
 				<div slot="header" class="clearfix">
 					<span><b>注册</b></span>
-					<el-button style="float: right; padding: 3px 0" type="text" @click="login">已有账号？点我登录</el-button>
+					<el-button style="float: right; padding: 3px 0" type="text" @click="toLogin">已有账号？点我登录</el-button>
 				</div>
 				<el-form :model="registform" status-icon :rules="rules" ref="registform" label-width="100px"
 					class="demo-ruleForm">
@@ -83,6 +83,40 @@
 			}
 		},
 		methods: {
+			login() {
+				this.$http.post(baseurl + '/login',
+					{
+						username: this.registform.username,
+						password: this.registform.password
+					},
+					{ emulateJSON: true }).then(function (res) {
+						if (!res.ok) {
+							this.$message.error('登录失败：服务器内部错误');
+							return
+						}
+						else {
+							this.$message({
+								message: '登录成功',
+								type: 'success'
+							});
+							const token = res.body.token
+							const User = JSON.stringify(res.body.User)
+							localStorage.setItem('User', User)
+							localStorage.setItem('token', token)
+							window.location.href = "U_information.html"
+						}
+					}, function (res) {
+						if (res.status == 401) {
+							this.$message.error('登录失败：用户名或密码错误');
+						}
+						else if (res.status == 403) {
+							this.$message.error('登录失败：该账号已被禁止登陆');
+						}
+						else {
+							this.$message.error('登录失败：服务器通信异常');
+						}
+					});
+			},
 			submitForm(formName) {
 				this.$refs[formName].validate((valid) => {
 					if (valid) {
@@ -93,12 +127,18 @@
 								phone: this.registform.phone
 							},
 							{ emulateJSON: true }).then(function (res) {
-								this.$alert('请使用用户名【' + this.registform.username + '】进行登录！', '注册成功', {
-									confirmButtonText: '去登录',
-									callback: action => {
-										window.location.href = 'login.html'
-									}
+								this.$message({
+									message: '注册成功：3秒后为您自动登录',
+									type: 'success',
+									duration: 3000,
 								});
+								setTimeout(() => { this.login() }, 3000);
+								// this.$alert('请使用用户名【' + this.registform.username + '】进行登录！', '注册成功', {
+								// 	confirmButtonText: '去登录',
+								// 	callback: action => {
+								// 		window.location.href = 'login.html'
+								// 	}
+								// });
 							}, function (res) {
 								if (res.status == 418) {
 									this.$message.error('注册失败：用户名已存在');
@@ -112,7 +152,7 @@
 					}
 				});
 			},
-			login() {
+			toLogin() {
 				window.location.href = "login.html"
 			}
 		},
