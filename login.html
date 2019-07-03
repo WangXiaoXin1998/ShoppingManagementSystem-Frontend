@@ -17,11 +17,24 @@
 					<el-button style="float: right; padding: 3px 0" @click="regist" type="text">没有账号？点我注册
 					</el-button>
 				</div>
+				<el-form hide-required-asterisk=true :model="loginform" status-icon :rules="rules" ref="loginform"
+					label-width="100px" class="demo-ruleForm">
+					<el-form-item label="用户名" size="medium" prop="username">
+						<el-input v-model="loginform.username"></el-input>
+					</el-form-item>
+					<el-form-item label="密码" size="medium" prop="password" autocomplete="off">
+						<el-input type="password" v-model="loginform.password"></el-input>
+					</el-form-item>
+					<el-form-item label="角色" prop="character">
+						<el-radio-group v-model="loginform.character" class="chooseType">
+							<el-radio label="用户"></el-radio>
+							<el-radio label="管理员"></el-radio>
+						</el-radio-group>
+					</el-form-item>
+				</el-form>
 				<center>
-					账号：<el-input v-model="loginform.username" placeholder="请输入用户名" class='input'></el-input><br>
-					密码：<el-input v-model="loginform.password" placeholder="请输入密码" class='input'></el-input><br><br>
-					<el-button type="primary" @click="login">登录</el-button>
-					<el-button type="primary" @click="login_admin">管理员登录</el-button>
+					<el-button type="primary" @click="submitForm('loginform')">登录</el-button>
+					<el-button @click="resetForm('loginform')">重置</el-button>
 				</center>
 			</el-card>
 		</div>
@@ -35,6 +48,18 @@
 			loginform: {
 				username: '',
 				password: '',
+				character: '用户',
+			},
+			rules: {
+				username: [
+					{ required: true, message: '请输入用户名', trigger: 'blur' },
+				],
+				password: [
+					{ required: true, message: '请输入密码', trigger: 'blur' }
+				],
+				character: [
+					{ required: true, message: '请选择角色', trigger: 'blur' }
+				],
 			}
 		},
 		methods: {
@@ -60,55 +85,83 @@
 					}
 				});
 			},
-			login() {
-				this.$http.post(baseurl + '/login',
-					{
-						username: this.loginform.username,
-						password: this.loginform.password
-					},
-					{ emulateJSON: true }).then(function (res) {
-						if (!res.ok) {
-							console.log('登录失败')
-							return
+			submitForm(formName) {
+				this.$refs[formName].validate((valid) => {
+					if (valid) {
+						if (this.loginform.character == '用户') {
+							this.$http.post(baseurl + '/login',
+								{
+									username: this.loginform.username,
+									password: this.loginform.password
+								},
+								{ emulateJSON: true }).then(function (res) {
+									if (!res.ok) {
+										this.$message.error('登录失败：服务器内部错误');
+										return
+									}
+									else {
+										this.$message({
+											message: '登录成功',
+											type: 'success'
+										});
+										const token = res.body.token
+										const User = JSON.stringify(res.body.User)
+										localStorage.setItem('User', User)
+										localStorage.setItem('token', token)
+										window.location.href = "U_information.html"
+									}
+								}, function (res) {
+									if (res.status == 401) {
+										this.$message.error('登录失败：用户名或密码错误');
+									}
+									else if (res.status == 403) {
+										this.$message.error('登录失败：该账号已被禁止登陆');
+									}
+									else {
+										this.$message.error('登录失败：服务器通信异常');
+									}
+								});
+						} else {
+							this.$http.post(baseurl + '/login_admin',
+								{
+									username: this.loginform.username,
+									password: this.loginform.password
+								},
+								{ emulateJSON: true }).then(function (res) {
+									if (!res.ok) {
+										this.$message.error('登录失败：服务器内部错误');
+										return
+									}
+									else {
+										this.$message({
+											message: '登录成功',
+											type: 'success'
+										});
+										const token = res.body.token
+										const Manage = JSON.stringify(res.body.Manage)
+										localStorage.setItem('Manage', Manage)
+										localStorage.setItem('token', token)
+										window.location.href = "M_information.html"
+									}
+								}, function (res) {
+									if (res.status == 401) {
+										this.$message.error('登录失败：用户名或密码错误');
+									}
+									else if (res.status == 403) {
+										this.$message.error('登录失败：该账号已被禁止登陆');
+									}
+									else {
+										this.$message.error('登录失败：服务器通信异常');
+									}
+								});
 						}
-						else {
-							console.log('登陆成功')
-							const token = res.body.token
-							const User = JSON.stringify(res.body.User)
-							console.log(token);
-							localStorage.setItem('User', User)
-							localStorage.setItem('token', token)
-							window.location.href = "U_information.html"
-						}
-					}, function (res) {
-						console.log(res.status);
-						console.log('服务器连接异常')
-					});
+					} else {
+						return false;
+					}
+				});
 			},
-			login_admin() {
-				this.$http.post(baseurl + '/login_admin',
-					{
-						username: this.loginform.username,
-						password: this.loginform.password
-					},
-					{ emulateJSON: true }).then(function (res) {
-						if (!res.ok) {
-							console.log('登录失败')
-							return
-						}
-						else {
-							console.log('登陆成功')
-							const token = res.body.token
-							const Manage = JSON.stringify(res.body.Manage)
-							console.log(Manage)
-							localStorage.setItem('Manage', Manage)
-							localStorage.setItem('token', token)
-							window.location.href = "M_information.html"
-						}
-					}, function (res) {
-						console.log(res.status);
-						console.log('服务器连接异常')
-					});
+			resetForm(formName) {
+				this.$refs[formName].resetFields();
 			},
 			regist() {
 				window.location.href = "regist.html"
@@ -133,6 +186,10 @@
 		width: 250px;
 		margin-bottom: 10px;
 		margin-top: 10px;
+	}
+
+	.chooseType {
+		margin-top: 10.5px;
 	}
 </style>
 
