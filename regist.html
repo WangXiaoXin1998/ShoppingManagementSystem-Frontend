@@ -10,28 +10,32 @@
 	<canvas id="Mycanvas"></canvas>
 	<script type="text/javascript" src="js/background.js"></script>
 	<div id="control">
-		<div class="loginform">
+		<div class="registform">
 			<el-card class="box-card">
 				<div slot="header" class="clearfix">
 					<span><b>注册</b></span>
 					<el-button style="float: right; padding: 3px 0" type="text" @click="login">已有账号？点我登录</el-button>
 				</div>
-				&emsp;用户名：<el-input v-model="registform.username" placeholder="请输入用户名" class='input'></el-input>
-				<br>
-				<div class="tips">{{tips[0]}}</div><br>
-				&emsp;手机号：<el-input v-model="registform.phone" placeholder="请输入手机号" class='input'></el-input>
-				<br>
-				<div class="tips">{{tips[1]}}</div><br>
-				&emsp;&emsp;密码：<el-input v-model="registform.password" placeholder="请输入密码" show-password class='input'>
-				</el-input>
-				<br>
-				<div class="tips">{{tips[2]}}</div><br>
-				密码确认：<el-input v-model="registform.checkpwd" placeholder="请再次输入密码" show-password class='input'>
-				</el-input>
-				<br>
-				<div class="tips">{{tips[3]}}</div><br>
+				<el-form :model="registform" status-icon :rules="rules" ref="registform" label-width="100px"
+					class="demo-ruleForm">
+					<el-form-item label="用户名" size="medium" prop="username">
+						<el-input v-model="registform.username" placeholder="请输入用户名" class="input"></el-input>
+					</el-form-item>
+					<el-form-item label="手机号" size="medium" prop="phone">
+						<el-input v-model="registform.phone" placeholder="请输入手机号" class="input"></el-input>
+					</el-form-item>
+					<el-form-item label="密码" size="medium" prop="password" autocomplete="off">
+						<el-input type="password" v-model="registform.password" placeholder="请输入密码" class="input">
+						</el-input>
+					</el-form-item>
+					<el-form-item label="确认密码" size="medium" prop="checkpwd" autocomplete="off">
+						<el-input type="password" v-model="registform.checkpwd" placeholder="请再输一次密码" class="input">
+						</el-input>
+					</el-form-item>
+				</el-form>
 				<center>
-					<el-button type="primary" @click="regist" :disabled="registflag">注册</el-button>
+					<el-button type="primary" @click="submitForm('registform')">注册</el-button>
+					<el-button @click="resetForm('registform')">重置</el-button>
 				</center>
 			</el-card>
 		</div>
@@ -41,78 +45,83 @@
 <script>
 	var vm = new Vue({
 		el: '#control',
-		data: {
-			registform: {
-				username: '',
-				phone: '',
-				password: '',
-				checkpwd: '',
-			},
-			tips: ['', '', '', '', '', ''],
-			registflag: 1,
+		data() {
+			let checkpwd = (rule, value, callback) => {
+				if (value !== this.registform.password) {
+					callback(new Error('两次输入密码不一致!'));
+				} else {
+					callback();
+				}
+			};
+			return {
+				registform: {
+					username: '',
+					phone: '',
+					password: '',
+					checkpwd: '',
+				},
+				rules: {
+					username: [
+						{ required: true, message: '请输入用户名', trigger: 'blur' },
+						{ min: 6, max: 20, message: '用户名必须为6-20位', trigger: 'blur' }
+					],
+					phone: [
+						{ required: true, message: '请输入手机号', trigger: 'blur' },
+						{ pattern: /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/, message: '手机号格式有误', trigger: 'blur' },
+					],
+					password: [
+						{ required: true, message: '请输入密码', trigger: 'blur' },
+						{ min: 8, max: 20, message: '密码必须为8-20位', trigger: 'blur' },
+						{ pattern: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,20}$/, message: '密码必须同时包含数字、字母', trigger: 'blur' },
+
+					],
+					checkpwd: [
+						{ required: true, message: '请再次输入密码', trigger: 'blur' },
+						{ validator: checkpwd, trigger: 'blur' }
+					],
+				}
+			}
 		},
 		methods: {
-			checkform() {
-				if (this.registform.username != '' && this.registform.phone != '' && this.registform.password != '' && this.registform.checkpwd != '') {
-					if (this.tips[0] == '' && this.tips[1] == '' && this.tips[2] == '' && this.tips[3] == '')
-						this.registflag = 0
-				}
-			},
-			regist() {
-				this.$http.post(baseurl + '/register',
-					{
-						username: this.registform.username,
-						password: this.registform.checkpwd,
-						phone: this.registform.phone
-					},
-					{ emulateJSON: true }).then(function (res) {
-						document.write(res.body);
-						console.log("success");
-						window.location.href = 'login.html'
-					}, function (res) {
-						console.log(res.status);
-						console.log("fail");
-					});
+			submitForm(formName) {
+				this.$refs[formName].validate((valid) => {
+					if (valid) {
+						this.$http.post(baseurl + '/register',
+							{
+								username: this.registform.username,
+								password: this.registform.checkpwd,
+								phone: this.registform.phone
+							},
+							{ emulateJSON: true }).then(function (res) {
+								this.$alert('请使用用户名【' + this.registform.username + '】进行登录！', '注册成功', {
+									confirmButtonText: '去登录',
+									callback: action => {
+										window.location.href = 'login.html'
+									}
+								});
+							}, function (res) {
+								if (res.status == 418) {
+									this.$message.error('注册失败：用户名已存在');
+								}
+								else {
+									this.$message.error('注册失败：服务器通信异常');
+								}
+							});
+					} else {
+						return false;
+					}
+				});
 			},
 			login() {
 				window.location.href = "login.html"
 			}
 		},
-		watch: {
-			'registform.username'(val) {
-				val.length < 6 || val.length > 20 ? this.tips[0] = '用户名必须为6-20位' : this.tips[0] = '';
-				this.checkform()
-			},
-			'registform.phone'(val) {
-				if (!(/^1[3456789]\d{9}$/.test(val))) {
-					this.tips[1] = '手机号格式有误'
-				}
-				else {
-					this.tips[1] = ''
-				}
-				this.checkform()
-			},
-			'registform.password'(val) {
-				val.length < 6 || val.length > 20 ? this.tips[2] = '密码必须为6-20位' : this.tips[2] = '';
-				val != this.registform.checkpwd ? this.tips[3] = '两次密码输入不一致' : this.tips[3] = ''
-				this.checkform()
-			},
-			'registform.checkpwd'(val) {
-				if (this.registform.password != '') {
-					val != this.registform.password ? this.tips[3] = '两次密码输入不一致' : this.tips[3] = ''
-				}
-				else {
-					this.tips[3] = ''
-				}
-				this.checkform()
-			},
-		}
 	});
 </script>
 
 <style>
 	.input {
-		width: 250px;
+		width: 230px;
 	}
 
 	#control {
@@ -121,32 +130,13 @@
 		left: 50%;
 	}
 
-	.loginform {
+	.registform {
 		width: 400px;
 		margin-left: -200px;
 	}
 
-	.tips {
-		color: red;
-		font-size: 13px;
-		float: right;
-		text-align: left;
-		margin-top: -30px;
-		margin-left: 200px;
-	}
-
-	.clearfix:before,
-	.clearfix:after {
-		display: table;
-		content: "";
-	}
-
-	.clearfix:after {
-		clear: both
-	}
-
 	.box-card {
-		width: 500px;
+		width: 400px;
 	}
 </style>
 

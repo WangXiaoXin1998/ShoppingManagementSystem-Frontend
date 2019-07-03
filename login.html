@@ -20,10 +20,10 @@
 				<el-form hide-required-asterisk=true :model="loginform" status-icon :rules="rules" ref="loginform"
 					label-width="100px" class="demo-ruleForm">
 					<el-form-item label="用户名" size="medium" prop="username">
-						<el-input v-model="loginform.username"></el-input>
+						<el-input v-model="loginform.username" placeholder="请输入用户名" class="input"></el-input>
 					</el-form-item>
 					<el-form-item label="密码" size="medium" prop="password" autocomplete="off">
-						<el-input type="password" v-model="loginform.password"></el-input>
+						<el-input type="password" v-model="loginform.password" placeholder="请输入密码" class="input"></el-input>
 					</el-form-item>
 					<el-form-item label="角色" prop="character">
 						<el-radio-group v-model="loginform.character" class="chooseType">
@@ -172,24 +172,25 @@
 <style>
 	#control {
 		position: fixed;
-		top: 50%;
+		top: 15%;
 		left: 50%;
 	}
 
 	.loginform {
 		width: 400px;
-		margin-top: -50%;
-		margin-left: -50%;
+		margin-left: -200px;
 	}
 
 	.input {
-		width: 250px;
-		margin-bottom: 10px;
-		margin-top: 10px;
+		width: 230px;
 	}
 
 	.chooseType {
 		margin-top: 10.5px;
+	}
+
+	.box-card {
+		width: 400px;
 	}
 </style>
 
