@@ -7,16 +7,19 @@
 <script type="text/javascript" src="js/js_lead-in.js"></script>
 
 <body>
+	<canvas id="Mycanvas"></canvas>
+	<script type="text/javascript" src="js/background.js"></script>
 	<div id="control">
 		<div class="loginform">
 			<el-card class="box-card">
 				<div slot="header" class="clearfix">
-					<span>登录</span>
-					<el-button style="float: right; padding: 3px 0" @click="regist" type="text">没有账号？点我注册</el-button>
+					<span><b>登录</b></span>
+					<el-button style="float: right; padding: 3px 0" @click="regist" type="text">没有账号？点我注册
+					</el-button>
 				</div>
-				账号：<el-input v-model="loginform.username" placeholder="请输入用户名" class='input'></el-input><br>
-				密码：<el-input v-model="loginform.password" placeholder="请输入密码" class='input'></el-input><br>
 				<center>
+					账号：<el-input v-model="loginform.username" placeholder="请输入用户名" class='input'></el-input><br>
+					密码：<el-input v-model="loginform.password" placeholder="请输入密码" class='input'></el-input><br><br>
 					<el-button type="primary" @click="login">登录</el-button>
 					<el-button type="primary" @click="login_admin">管理员登录</el-button>
 				</center>
@@ -58,7 +61,7 @@
 				});
 			},
 			login() {
-				this.$http.post(baseurl+'/login',
+				this.$http.post(baseurl + '/login',
 					{
 						username: this.loginform.username,
 						password: this.loginform.password
@@ -83,7 +86,7 @@
 					});
 			},
 			login_admin() {
-				this.$http.post(baseurl+'/login_admin',
+				this.$http.post(baseurl + '/login_admin',
 					{
 						username: this.loginform.username,
 						password: this.loginform.password
@@ -114,8 +117,16 @@
 	});
 </script>
 <style>
+	#control {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+	}
+
 	.loginform {
 		width: 400px;
+		margin-top: -50%;
+		margin-left: -50%;
 	}
 
 	.input {

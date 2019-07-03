@@ -7,30 +7,34 @@
 <script type="text/javascript" src="js/js_lead-in.js"></script>
 
 <body>
+	<canvas id="Mycanvas"></canvas>
+	<script type="text/javascript" src="js/background.js"></script>
 	<div id="control">
-		<el-card class="box-card">
-			<div slot="header" class="clearfix">
-				<span>注册</span>
-				<el-button style="float: right; padding: 3px 0" type="text" @click="login">已有账号？点我登录</el-button>
-			</div>
-			&emsp;用户名：<el-input v-model="registform.username" placeholder="请输入用户名" class='input'></el-input>
-			<br>
-			<div class="tips">{{tips[0]}}</div><br>
-			&emsp;手机号：<el-input v-model="registform.phone" placeholder="请输入手机号" class='input'></el-input>
-			<br>
-			<div class="tips">{{tips[1]}}</div><br>
-			&emsp;&emsp;密码：<el-input v-model="registform.password" placeholder="请输入密码" show-password class='input'>
-			</el-input>
-			<br>
-			<div class="tips">{{tips[2]}}</div><br>
-			密码确认：<el-input v-model="registform.checkpwd" placeholder="请再次输入密码" show-password class='input'>
-			</el-input>
-			<br>
-			<div class="tips">{{tips[3]}}</div><br>
-			<center>
-				<el-button type="primary" @click="regist" :disabled="registflag">注册</el-button>
-			</center>
-		</el-card>
+		<div class="loginform">
+			<el-card class="box-card">
+				<div slot="header" class="clearfix">
+					<span><b>注册</b></span>
+					<el-button style="float: right; padding: 3px 0" type="text" @click="login">已有账号？点我登录</el-button>
+				</div>
+				&emsp;用户名：<el-input v-model="registform.username" placeholder="请输入用户名" class='input'></el-input>
+				<br>
+				<div class="tips">{{tips[0]}}</div><br>
+				&emsp;手机号：<el-input v-model="registform.phone" placeholder="请输入手机号" class='input'></el-input>
+				<br>
+				<div class="tips">{{tips[1]}}</div><br>
+				&emsp;&emsp;密码：<el-input v-model="registform.password" placeholder="请输入密码" show-password class='input'>
+				</el-input>
+				<br>
+				<div class="tips">{{tips[2]}}</div><br>
+				密码确认：<el-input v-model="registform.checkpwd" placeholder="请再次输入密码" show-password class='input'>
+				</el-input>
+				<br>
+				<div class="tips">{{tips[3]}}</div><br>
+				<center>
+					<el-button type="primary" @click="regist" :disabled="registflag">注册</el-button>
+				</center>
+			</el-card>
+		</div>
 	</div>
 </body>
 
@@ -109,6 +113,17 @@
 <style>
 	.input {
 		width: 250px;
+	}
+
+	#control {
+		position: fixed;
+		top: 15%;
+		left: 50%;
+	}
+
+	.loginform {
+		width: 400px;
+		margin-left: -200px;
 	}
 
 	.tips {

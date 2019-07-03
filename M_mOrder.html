@@ -11,29 +11,29 @@
 		<script type="text/javascript" src="js/M_frame_start.js"></script>
 		　　<el-table v-loading="loading"
 			:data="tableData.filter(data => !search || data.time.toLowerCase().includes(search.toLowerCase())|| data.orderid.toLowerCase().includes(search.toLowerCase())|| data.orderstate.toLowerCase().includes(search.toLowerCase())|| data.userid.toLowerCase().includes(search.toLowerCase())|| data.username.toLowerCase().includes(search.toLowerCase())|| data.goodsid.toLowerCase().includes(search.toLowerCase())|| data.goodsname.toLowerCase().includes(search.toLowerCase())|| data.paymoney.toLowerCase().includes(search.toLowerCase()))"
-			style="width: 100%" stripe>
+			style="width: 100%" stripe :default-sort="{prop: 'time', order: 'descending'}">
 			<el-table-column label="生成时间" prop="time" width="180">
 			</el-table-column>
 			<el-table-column label="订单ID" prop="orderid" width=100>
 			</el-table-column>
 			<el-table-column label="购买用户" width=160>
 				<template slot-scope="scope">
-					{{tableData[scope.$index].username}}（ID:{{tableData[scope.$index].userid}}）
+					{{scope.row.username}}（ID:{{scope.row.userid}}）
 				</template>
 			</el-table-column>
 			<el-table-column label="购买商品">
 				<template slot-scope="scope">
-					{{tableData[scope.$index].goodsname}}（ID:{{tableData[scope.$index].goodsid}}）
+					{{scope.row.goodsname}}（ID:{{scope.row.goodsid}}）
 				</template>
 			</el-table-column>
 			<el-table-column label="订单状态" width="90">
 				<template slot-scope="scope">
-					{{orderStateTable[tableData[scope.$index].orderstate]}}
+					{{orderStateTable[scope.row.orderstate]}}
 				</template>
 			</el-table-column>
 			<el-table-column label="实付金额" width="100">
 				<template slot-scope="scope">
-					¥{{Number(tableData[scope.$index].paymoney).toFixed(2)}}
+					¥{{Number(scope.row.paymoney).toFixed(2)}}
 				</template>
 			</el-table-column>
 			<el-table-column align="right" width=200>
@@ -41,7 +41,7 @@
 					<el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
 				</template>
 				<template slot-scope="scope">
-					<nobr v-if="tableData[scope.$index].orderstate=='1'">
+					<nobr v-if="scope.row.orderstate=='1'">
 						<el-button size="mini" type="primary" @click="handleChange(scope.$index, scope.row)">发货
 						</el-button>
 					</nobr>
@@ -115,7 +115,7 @@
 								message: '发货成功',
 								type: 'success'
 							});
-							this.tableData[index].orderstate = 2
+							row.orderstate = 2
 						}
 					}, function (res) {
 						this.$message.error('发货失败：服务器连接异常');
@@ -137,11 +137,21 @@
 								message: '删除成功',
 								type: 'success'
 							});
-							this.tableData.splice(index, 1);
+							this.tableData.splice(this.getIndex(row), 1);
 						}
 					}, function (res) {
 						this.$message.error('删除失败：服务器连接异常');
 					});
+			},
+			getIndex(row) {
+				index = 0
+				for (i of this.tableData) {
+					if (i.orderid == row.orderid) {
+						return index
+					}
+					index = index + 1
+				}
+				return
 			},
 			getData() {
 				this.$http.post(baseurl + '/getallorder',
@@ -156,7 +166,6 @@
 						}
 						else {
 							this.tableData = eval('(' + res.bodyText + ')')
-							console.log(this.tableData)
 							this.loading = false
 						}
 					}, function (res) {

@@ -1,0 +1,107 @@
+﻿<meta name="viewport" charset=utf-8″ content="width=device-width, initial-scale=1, user-scalable=no" />
+<html>
+
+<head>
+	<title>我的订单</title>
+</head>
+<script type="text/javascript" src="js/js_lead-in.js"></script>
+
+<body>
+	<div id="control">
+		<script type="text/javascript" src="js/U_frame_start.js"></script>
+		　　<el-table v-loading="loading"
+			:data="tableData.filter(data => !search || data.O_time.toLowerCase().includes(search.toLowerCase())|| data.O_id.toLowerCase().includes(search.toLowerCase())|| data.O_state.toLowerCase().includes(search.toLowerCase())|| data.C_name.toLowerCase().includes(search.toLowerCase())|| data.O_money.toLowerCase().includes(search.toLowerCase()))"
+			style="width: 100%" stripe
+			:default-sort = "{prop: 'O_time', order: 'descending'}">
+			<el-table-column label="生成时间" prop="O_time" width="180">
+			</el-table-column>
+			<el-table-column label="订单ID" prop="O_id">
+			</el-table-column>
+			<el-table-column label="商品名称" prop="C_name">
+			</el-table-column>
+			<el-table-column label="购买数量" prop="O_amount">
+			</el-table-column>
+			<el-table-column label="实付金额">
+				<template slot-scope="scope">
+					¥{{Number(scope.row.O_money).toFixed(2)}}
+				</template>
+			</el-table-column>
+			<el-table-column label="订单状态">
+				<template slot-scope="scope">
+					{{orderStateTable[scope.row.O_state]}}
+				</template>
+			</el-table-column>
+			<el-table-column align="right">
+				<template slot="header" slot-scope="scope">
+					<el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
+				</template>
+			</el-table-column>
+		</el-table>
+		<script type="text/javascript" src="js/U_frame_end.js"></script>
+	</div>
+</body>
+
+<script>
+	var vm = new Vue({
+		el: '#control',
+		data: {
+			title: '我的订单',
+			loading: true,
+			User: {
+				U_id: '',
+				U_name: '',
+				U_phone: ''
+			},
+			orderStateTable: ["待支付", "待发货", "已完成"],
+			orderview: [],
+			dialogFormVisible: false,
+			tableData: [],
+			search: ''
+		},
+		methods: {
+			exit() {
+				localStorage.clear();
+				window.location.href = 'login.html'
+			},
+			getData() {
+				this.$http.post(baseurl + '/getorders',
+					{
+						token: localStorage['token'],
+					},
+					{ emulateJSON: true }).then(function (res) {
+						if (!res.ok) {
+							this.$message.error('获取数据失败：请求被拒绝');
+							this.loading = false
+							return
+						}
+						else {
+							this.tableData = eval('(' + res.bodyText + ')')
+							console.log(this.tableData)
+							this.loading = false
+						}
+					}, function (res) {
+						this.$message.error('获取数据失败：服务器连接异常');
+						this.loading = false
+					});
+			}
+		},
+		mounted() {
+			if (!localStorage['token']) {
+				window.location.href = 'login.html'
+			}
+			this.getData()
+			this.User.U_id = JSON.parse(localStorage.User)['U_id']
+			this.User.U_name = JSON.parse(localStorage.User)['U_name']
+			this.User.U_phone = JSON.parse(localStorage.User)['U_grade']
+		}
+	})
+</script>
+
+<style>
+	.bigtitle {
+		font-size: 25px;
+		font-weight: 500;
+	}
+</style>
+
+</html>

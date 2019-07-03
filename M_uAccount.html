@@ -23,7 +23,7 @@
 					<el-switch v-model="tableData[scope.$index].userstate=='1'"
 						@click.native="changeState(scope.$index,scope.row)">
 					</el-switch>&nbsp;
-					{{tableData[scope.$index].userstate=='1'?'正常':'封禁'}}
+					{{scope.row.userstate=='1'?'正常':'封禁'}}
 				</template>
 			</el-table-column>
 			<el-table-column align="center">
