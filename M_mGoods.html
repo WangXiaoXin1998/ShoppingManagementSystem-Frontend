@@ -58,8 +58,7 @@
 						<el-option label="图书" value="9"></el-option>
 					</el-select>
 				</el-form-item>
-				<el-form-item label="商品名称" :label-width="formLabelWidth"  maxlength=30
-					show-word-limit prop="name">
+				<el-form-item label="商品名称" :label-width="formLabelWidth" maxlength=30 show-word-limit prop="name">
 					<el-input v-model="goods.name" autocomplete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="商品价格" :label-width="formLabelWidth" prop="price">
@@ -128,7 +127,7 @@
 		methods: {
 			exit() {
 				localStorage.clear();
-				window.location.href='login.html'
+				window.location.href = 'login.html'
 			},
 			async handleDelete(index, row) {
 				this.$http.post(baseurl + '/deletegoods',
@@ -149,7 +148,11 @@
 							this.tableData.splice(index, 1);
 						}
 					}, function (res) {
-						this.$message.error('删除失败：服务器连接异常');
+						if (res.status) {
+							this.$message.error('修改失败：请先删除包含该商品的所有订单');
+						} else {
+							this.$message.error('删除失败：服务器连接异常');
+						}
 					});
 			},
 			reviseChange(index, row) {
@@ -189,7 +192,6 @@
 							this.tableData[this.index].T_id = this.goods.type
 							this.tableData[this.index].C_price = this.goods.price
 							this.tableData[this.index].C_stock = this.goods.stock
-							// this.tableData.splice(index, this.goods);
 						}
 					}, function (res) {
 						this.$message.error('修改失败：服务器连接异常');
