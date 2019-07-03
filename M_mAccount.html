@@ -18,15 +18,18 @@
 			</el-table-column>
 			<el-table-column label="管理权限" prop="managergrade">
 			</el-table-column>
-			<el-table-column label="用户状态" prop="managerstate">
+			<el-table-column label="账户状态">
+				<template slot-scope="scope">
+					{{scope.row.managerstate=='1'?'正常':'封禁'}}
+				</template>
 			</el-table-column>
 			<el-table-column align="center">
 				<template slot="header" slot-scope="scope">
 					<el-input v-model="search" size="mini" placeholder="输入关键字搜索" />
 				</template>
-				<template slot-scope="scope">
+				<!-- <template slot-scope="scope">
 					<el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-				</template>
+				</template> -->
 			</el-table-column>
 		</el-table>
 		<script type="text/javascript" src="js/M_frame_end.js"></script>
@@ -50,31 +53,7 @@
 		methods: {
 			exit() {
 				localStorage.clear();
-				window.location.href='login.html'
-			},
-			async handleDelete(index, row) {
-				window.alert('该功能未做')
-				return
-				this.$http.post(baseurl + '/deleteuser',
-					{
-						token: localStorage['token'],
-						userid: row.userid,
-					},
-					{ emulateJSON: true }).then(function (res) {
-						if (!res.ok) {
-							this.$message.error('删除失败：请求被拒绝');
-							return
-						}
-						else {
-							this.$message({
-								message: '删除成功：他号没了',
-								type: 'success'
-							});
-							this.tableData.splice(index, 1);
-						}
-					}, function (res) {
-						this.$message.error('删除失败：服务器连接异常');
-					});
+				window.location.href = 'login.html'
 			},
 			getData() {
 				this.$http.post(baseurl + '/getallmanager',
