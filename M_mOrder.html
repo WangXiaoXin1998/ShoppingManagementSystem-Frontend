@@ -169,8 +169,13 @@
 							this.loading = false
 						}
 					}, function (res) {
-						this.$message.error('获取数据失败：服务器连接异常');
-						this.loading = false
+						if (res.status == 401) {
+							this.$message.error('获取数据失败：token权限验证失败');
+							window.location.href = "login.html"
+						} else {
+							this.$message.error('获取数据失败：服务器连接异常');
+							this.loading = false
+						}
 					});
 			}
 		},
