@@ -37,7 +37,7 @@ document.write('\
                 <template slot="title"><i class="el-icon-document-copy"></i>订单管理</template>\
                 <el-link href="M_mOrder.html" target="_self">\
                     <el-menu-item index="4-1">\
-                        查看订单\
+                        订单列表\
                     </el-menu-item>\
                 </el-link>\
             </el-submenu>\
