@@ -20,7 +20,7 @@
 			<el-col :span="14">
 				<div class="bigtitle">{{timeduring}}，{{Manage.M_name}}！</div><br><br>
 				管理ＩＤ：{{Manage.M_id}}<br><br>
-				管理权限：{{Manage.M_grade}}
+				管理权限：{{Manage.M_grade==2?'超级管理员':'商城管理员'}}
 			</el-col>
 		</el-row>
 		<script type="text/javascript" src="js/M_frame_end.js"></script>

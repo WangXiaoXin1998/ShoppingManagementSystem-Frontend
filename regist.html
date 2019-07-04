@@ -48,7 +48,7 @@
 		data() {
 			let checkpwd = (rule, value, callback) => {
 				if (value !== this.registform.password) {
-					callback(new Error('两次输入密码不一致!'));
+					callback(new Error('两次输入密码不一致'));
 				} else {
 					callback();
 				}

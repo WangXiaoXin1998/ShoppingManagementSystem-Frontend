@@ -90,7 +90,7 @@
 						this.$message.error('修改失败：服务器连接异常');
 					});
 			},
-			async handleDelete(index, row) {
+			handleDelete(index, row) {
 				this.$http.post(baseurl + '/deleteuser',
 					{
 						token: localStorage['token'],
