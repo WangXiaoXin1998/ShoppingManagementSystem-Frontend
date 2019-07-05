@@ -11,18 +11,20 @@
 		<script type="text/javascript" src="js/M_frame_start.js"></script>
 		<br>
 		<el-row style="min-width:1000px">
-			<el-col :span="2"><br></el-col>
-			<el-col :span="8">
+			<el-col :span="3"><br></el-col>
+			<el-col :span="7">
 				<div class="demo-basic--circle">
-					<el-avatar :size="300">
-						<nobr style="font-size:80px">admin</nobr>
+					<el-avatar :size="230">
+						<nobr style="font-size:60px">admin</nobr>
 					</el-avatar>
 				</div>
 			</el-col>
 			<el-col :span="14">
 				<div class="bigtitle">{{timeduring}}，{{Manage.M_name}}！</div><br><br>
-				管理ＩＤ：{{Manage.M_id}}<br><br>
-				管理权限：{{Manage.M_grade==2?'超级管理员':'商城管理员'}}
+				<i class="el-icon-user-solid"></i>&ensp;管理ＩＤ：{{Manage.M_id}}<br><br>
+				<i class="el-icon-s-management"></i>&ensp;管理权限：{{Manage.M_grade==2?'超级管理员':'商城管理员'}}<br><br>
+				<i class="el-icon-s-order"></i>&ensp;订单总数：{{orderNumber.total}}个<br><br>
+				<i class="el-icon-s-unfold"></i>&ensp;待发订单：{{orderNumber.waiting}}个
 			</el-col>
 		</el-row>
 		<script type="text/javascript" src="js/M_frame_end.js"></script>
@@ -40,6 +42,10 @@
 				M_name: '',
 				M_grade: '',
 			},
+			orderNumber: {
+				total: 0,
+				waiting: 0,
+			}
 		},
 		methods: {
 			exit() {
@@ -61,11 +67,42 @@
 					this.timeduring = '晚上好'
 				}
 			},
+			getData() {
+				this.$http.post(baseurl + '/getallorder',
+					{
+						token: localStorage['token'],
+					},
+					{ emulateJSON: true }).then(function (res) {
+						if (!res.ok) {
+							this.$message.error('获取数据失败：请求被拒绝');
+							this.loading = false
+							return
+						}
+						else {
+							tableData = eval('(' + res.bodyText + ')')
+							this.orderNumber.total = Object.getOwnPropertyNames(tableData).length
+							for (i of tableData) {
+								if (i.orderstate == 1) {
+									this.orderNumber.waiting = this.orderNumber.waiting + 1
+								}
+							}
+						}
+					}, function (res) {
+						if (res.status == 401) {
+							this.$message.error('获取数据失败：token权限验证失败');
+							window.location.href = "login.html"
+						} else {
+							this.$message.error('获取数据失败：服务器连接异常');
+							this.loading = false
+						}
+					});
+			}
 		},
 		mounted() {
 			if (!localStorage['token']) {
 				window.location.href = 'login.html'
 			}
+			this.getData()
 			this.Manage.M_id = JSON.parse(localStorage.Manage)['M_id']
 			this.Manage.M_name = JSON.parse(localStorage.Manage)['M_name']
 			this.Manage.M_grade = JSON.parse(localStorage.Manage)['M_grade']

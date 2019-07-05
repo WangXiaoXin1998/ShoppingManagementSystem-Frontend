@@ -11,18 +11,19 @@
 		<script type="text/javascript" src="js/U_frame_start.js"></script>
 		<br>
 		<el-row style="min-width:1000px">
-			<el-col :span="2"><br></el-col>
-			<el-col :span="8">
+			<el-col :span="3"><br></el-col>
+			<el-col :span="7">
 				<div class="demo-basic--circle">
-					<el-avatar :size="300">
-						<nobr style="font-size:80px">user</nobr>
+					<el-avatar :size="230">
+						<nobr style="font-size:60px">user</nobr>
 					</el-avatar>
 				</div>
 			</el-col>
 			<el-col :span="14">
 				<div class="bigtitle">{{timeduring}}，{{User.U_name}}！</div><br><br>
-				用户ＩＤ：{{User.U_id}}<br><br>
-				手机号码：{{User.U_phone}}
+				<i class="el-icon-user-solid"></i>&ensp;用户ＩＤ：{{User.U_id}}<br><br>
+				<i class="el-icon-phone"></i>&ensp;手机号码：{{User.U_phone}}<br><br>
+				<i class="el-icon-s-order"></i>&ensp;订单总数：{{orderNumber}}个
 			</el-col>
 		</el-row>
 		<script type="text/javascript" src="js/U_frame_end.js"></script>
@@ -40,6 +41,7 @@
 				U_name: '',
 				U_phone: '',
 			},
+			orderNumber: 0,
 		},
 		methods: {
 			exit() {
@@ -61,11 +63,30 @@
 					this.timeduring = '晚上好'
 				}
 			},
+			getData() {
+				this.$http.post(baseurl + '/getorders',
+					{
+						token: localStorage['token'],
+					},
+					{ emulateJSON: true }).then(function (res) {
+						if (!res.ok) {
+							this.$message.error('获取数据失败：请求被拒绝');
+							return
+						}
+						else {
+							tableData = eval('(' + res.bodyText + ')')
+							this.orderNumber = Object.getOwnPropertyNames(tableData).length
+						}
+					}, function (res) {
+						this.$message.error('获取数据失败：服务器连接异常');
+					});
+			}
 		},
 		mounted() {
 			if (!localStorage['token']) {
 				window.location.href = 'login.html'
 			}
+			this.getData()
 			this.User.U_id = JSON.parse(localStorage.User)['U_id']
 			this.User.U_name = JSON.parse(localStorage.User)['U_name']
 			this.User.U_phone = JSON.parse(localStorage.User)['U_phone']
