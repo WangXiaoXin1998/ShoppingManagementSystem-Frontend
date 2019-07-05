@@ -10,11 +10,13 @@
 	<div id="control">
 		<script type="text/javascript" src="js/U_frame_start.js"></script>
 		<br>
-		<el-row  style="min-width:1000px">
+		<el-row style="min-width:1000px">
 			<el-col :span="2"><br></el-col>
 			<el-col :span="8">
 				<div class="demo-basic--circle">
-					<el-avatar :size="300"></el-avatar>
+					<el-avatar :size="300">
+						<nobr style="font-size:80px">user</nobr>
+					</el-avatar>
 				</div>
 			</el-col>
 			<el-col :span="14">
@@ -42,7 +44,7 @@
 		methods: {
 			exit() {
 				localStorage.clear();
-				window.location.href='login.html'
+				window.location.href = 'login.html'
 			},
 			getTime() {
 				hour = new Date().getHours()
